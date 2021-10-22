@@ -1,6 +1,8 @@
 ETL related solutions
 see: https://www.splunk.com/en_us/blog/it/event-processing-design-patterns-with-pulsar-functions.html
 
+Pulsar Function:
+
 [ ] Dynamic Routing
 [X] Filtering
 [X] Transformation
@@ -11,4 +13,5 @@ see: https://www.splunk.com/en_us/blog/it/event-processing-design-patterns-with-
 [ ] Alerts and Thresholds
 [ ] Simple Counting and Counting with Windows
 
+SLS:
 
