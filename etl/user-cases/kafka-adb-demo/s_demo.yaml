@@ -1,0 +1,42 @@
+# 本 yaml 为示例，请勿直接使用
+edition: 1.0.0
+name: compoent-test
+access: default
+services:
+  cn-shanghai-_FC_Kafka-kafka2adb-******:
+    component: devsapp/fc
+    props:
+      region: cn-shanghai
+      service:
+        description: create by alikafka, do not delete
+        role: acs:ram::160898******7:role/aliyunfcdefaultrole
+        logConfig:
+          project: aliyun-fc-cn-shanghai-fc8e72cb-4b60-56bd******
+          logstore: function-log
+          enableRequestMetrics: true
+          enableInstanceMetrics: false
+          logBeginRule: null
+        vpcConfig:
+          vpcId: vpc-uf6o4kbsmb3******
+          securityGroupId: sg-uf6f19yo4******
+          vswitchIds:
+            - vsw-uf6srz******
+        internetAccess: true
+        name: _FC_Kafka-******
+      function:
+        description: create by alikafka, do not delete
+        runtime: python3
+        handler: index.handler
+        timeout: 30
+        memorySize: 128
+        environmentVariables:
+          bootstrap_servers: 10.0.0.128:9092,10.0.0.130:9092,10.0.0.129:9092
+          target_topic: EmptyTargetTopic
+        instanceConcurrency: 1
+        instanceType: e1
+        layers:
+          - a8152d50e1960c4******#auto-gen-kafka-python-layer#1
+        name: fc-kafka-4079ba24
+        codeUri: >-
+          ./160898******_cn-shanghai__FC_Kafka-kafka2adb-******
+      triggers: []
