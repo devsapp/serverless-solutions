@@ -4,6 +4,8 @@
 import logging
 import os
 import json
+import string
+import re
 from kafka import KafkaProducer
 from kafka.errors import KafkaError
 import kafka
@@ -61,39 +63,61 @@ class ProduceToKafka(object):
 
 
 # 这里可以对消息进行处理后返回
-def deal_message(message):
-    # todo
-    return message
+def deal_message(message, rule):
+    result = set()
+    for pattern, target_topics in rule["rules"].items():
+        if re.match(pattern, message) is not None:
+            for topic in target_topics:
+                result.add(topic)
+    if len(result) == 0:
+        result.add(rule["defaultTopic"])
+    return result
 
+
+# In this demo, we will introduce you how to route the input events into
+# different topics dynamically. For example, we have two inputs
+# `Oral-B, toothpaste, $12.98, 100g` and `Colgate, toothpaste, $7.99, 80g`
+# and routing-rules which could be described as an item from Oral-B should be
+# sent to topic `Oral-B-item-topic` while an item from Colgate should be sent to topic
+# `Colgate-item-topic`, and then the `Oral-B, toothpaste, $12.98, 100g` message
+# will be routed to topic `Oral-B-item-topic` while the `Colgate, toothpaste, $7.99, 80g`
+# will be routed to topic `Colgate-item-topic`.
+# In particular, the rule can be hard-coded in your functions, and it
+# also can be retrieved from oss or any other data sources.
 
 # 函数入口
 def handler(event, context):
     bootstrap_servers = os.getenv("bootstrap_servers")
-    topic_name = os.getenv("target_topic")
-
+    # rule example json:
+    # {
+    #   "defaultTopic": "UnknownBrandTopic",
+    #   "rules": {
+    #     "Colgate": ["Colgate-item-topic"],
+    #     "Oral-B": ["Oral-B-item-topic"]
+    #   }
+    # }
+    rule_json = os.getenv("routing_rule")
     # processing data 数据处理，在这边可以做数据变换，最终保持数据投递格式为jsonArray
     evt = json.loads(event)
-
+    rule = json.loads(rule_json)
     produce_to_kafka = ProduceToKafka(bootstrap_servers)
     for record in evt:
-        dealt_message = deal_message(record)
-        if dealt_message is None:
+        target_topics = deal_message(record["value"], rule)
+        if len(target_topics) == 0:
             continue
-        key = None
-        value = None
-        for keyItem in dealt_message.keys():
-            if keyItem == 'key':
-                key = dealt_message[keyItem]
+        for target_topic in target_topics:
+            key = record["key"]
+            if key is None:
                 continue
-            if keyItem == 'value':
-                value = dealt_message[keyItem]
+            value = record["value"]
+            if value is None:
                 continue
-        msg = produce_to_kafka.produce(topic_name, key, value)
-        if msg is None:
-            logger.info("Try send message succeed. original kafka message info:" + str(record))
-        else:
-            logger.info("Try send to kafka failed! error message:" + bytes.decode(
-                msg) + " original kafka message info:" + record)
+            msg = produce_to_kafka.produce(target_topic, key, value)
+            if msg is None:
+                logger.info("Try send message succeed. original kafka message info:" + str(record))
+            else:
+                logger.info("Try send to kafka failed! error message:" + bytes.decode(
+                    msg) + " original kafka message info:" + record)
     msg = produce_to_kafka.flush()
     if msg is None:
         logger.info("Flush message succeed.")
