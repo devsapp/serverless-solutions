@@ -4,6 +4,7 @@
 import logging
 import os
 import json
+import string
 from kafka import KafkaProducer
 from kafka.errors import KafkaError
 import kafka
@@ -61,39 +62,44 @@ class ProduceToKafka(object):
 
 
 # 这里可以对消息进行处理后返回
-def deal_message(message):
-    # todo
-    return message
+def deal_message(message, delimiter):
+    return message.split(delimiter)
 
 
+
+
+# In this demo, we will introduce you how to split an item list
+# into several single items with an customized delimiter. For example, we have an input
+# `Oral-B, toothpaste, $12.98, 100g\nColgate, toothpaste, $7.99, 80g\nColgate, toothbrush, $1.99, 20g` with
+# the giving delimiter `\n`,
+# then the function will produce three items as outputs
+# `Oral-B, toothpaste, $12.98, 100g`
+# `Colgate, toothpaste, $7.99, 80g`
+# `Colgate, toothbrush, $1.99, 20g`
 # 函数入口
 def handler(event, context):
     bootstrap_servers = os.getenv("bootstrap_servers")
-    topic_name = os.getenv("target_topic")
+    target_topic_name = os.getenv("target_topic")
+    target_key_name = os.getenv("target_key")
+    delimiter = os.getenv("delimiter")
 
     # processing data 数据处理，在这边可以做数据变换，最终保持数据投递格式为jsonArray
     evt = json.loads(event)
 
     produce_to_kafka = ProduceToKafka(bootstrap_servers)
     for record in evt:
-        dealt_message = deal_message(record)
-        if dealt_message is None:
+        dealt_messages = deal_message(record["value"], delimiter)
+        if dealt_messages is None:
             continue
-        key = None
-        value = None
-        for keyItem in dealt_message.keys():
-            if keyItem == 'key':
-                key = dealt_message[keyItem]
+        for dealt_message in dealt_messages:
+            if len(dealt_message) == 0:
                 continue
-            if keyItem == 'value':
-                value = dealt_message[keyItem]
-                continue
-        msg = produce_to_kafka.produce(topic_name, key, value)
-        if msg is None:
-            logger.info("Try send message succeed. original kafka message info:" + str(record))
-        else:
-            logger.info("Try send to kafka failed! error message:" + bytes.decode(
-                msg) + " original kafka message info:" + record)
+            msg = produce_to_kafka.produce(target_topic_name, target_key_name, dealt_message)
+            if msg is None:
+                logger.info("Try send message succeed. original kafka message info:" + str(record))
+            else:
+                logger.info("Try send to kafka failed! error message:" + bytes.decode(
+                    msg) + " original kafka message info:" + record)
     msg = produce_to_kafka.flush()
     if msg is None:
         logger.info("Flush message succeed.")
