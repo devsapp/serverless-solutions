@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
 import logging
 import os
-import json
-import string
 import re
+
 from kafka import KafkaProducer
 from kafka.errors import KafkaError
-import kafka
 
 # 数据分隔处理
 # 函数接收单个消息，并将其按照分隔符（换行符）分为多个输出事件到目标 topic 中。
@@ -63,10 +62,25 @@ class ProduceToKafka(object):
 
 
 # 这里可以对消息进行处理后返回
-def deal_message(message, rule):
+def deal_message(message, rule, routing_by_key):
     result = set()
-    for pattern, target_topics in rule["rules"].items():
-        if re.match(pattern, message) is not None:
+    if routing_by_key and message["key"] == 0:
+        result.add(rule["defaultTopic"])
+        return result
+    elif not routing_by_key and len(message["value"]) == 0:
+        return result
+    v = message["value"]
+    if routing_by_key:
+        v = message["key"]
+    if len(v) == 0:
+        result.add(rule["defaultTopic"])
+        return result
+    for r in rule["rules"]:
+        pattern = r["regex"]
+        target_topics = r["targetTopics"]
+        if pattern is None:
+            continue
+        if re.match(pattern, v) is not None:
             for topic in target_topics:
                 result.add(topic)
     if len(result) == 0:
@@ -88,21 +102,36 @@ def deal_message(message, rule):
 # 函数入口
 def handler(event, context):
     bootstrap_servers = os.getenv("bootstrap_servers")
+    #
+    # rule meta:
+    #
+    # defaultTopic: # String, routing all mismatched messages to default topic
+    # rules: # List, rules describes a list of regex-based routing rules
+    #   - regex: # String, any regex matched string will be routing to each target topic for once
+    #     targetTopics: # List, all target topics related to regex
+    #
     # rule example json:
+    #
     # {
-    #   "defaultTopic": "UnknownBrandTopic",
-    #   "rules": {
-    #     "Colgate": ["Colgate-item-topic"],
-    #     "Oral-B": ["Oral-B-item-topic"]
-    #   }
+    #   "defaultTopic": "unknown-brand-topic",
+    #   "rules": [
+    #       {
+    #           "regex": "^Colgate",
+    #           "targetTopics": ["Colgate-item-topic","Colgate-discount-topic"]
+    #       },{
+    #           "regex": "^Oral-B",
+    #           "targetTopics": ["Oral-B-item-topic", "Oral-B-discount-topic"]
+    #       }
+    #   ]
     # }
     rule_json = os.getenv("routing_rule")
+    routing_by_key = os.getenv("routing_by_key", 'False').lower() in ('true', '1', 't')
     # processing data 数据处理，在这边可以做数据变换，最终保持数据投递格式为jsonArray
     evt = json.loads(event)
     rule = json.loads(rule_json)
     produce_to_kafka = ProduceToKafka(bootstrap_servers)
     for record in evt:
-        target_topics = deal_message(record["value"], rule)
+        target_topics = deal_message(record, rule, routing_by_key)
         if len(target_topics) == 0:
             continue
         for target_topic in target_topics:
