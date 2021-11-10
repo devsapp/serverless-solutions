@@ -4,41 +4,17 @@
 import logging
 import json
 import os
-from schema import Schema
+
 import pymysql
 import psycopg2
 from kafka import KafkaProducer
 from kafka.errors import KafkaError
 
+import rule
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-
-
-# enrichment_schema is used to validate messages.
-# todo: move to layer
-"""
-field: pk in db, 对于数据库采用单主键
-output_fields: 取出的字段，拼接到 value 中
-missing: 源中缺失时默认填充值
-mode:
-fill	当目标字段不存在或者值为空时，设置目标字段。
-fill-auto	当新值非空，且目标字段不存在或者值为空时，设置目标字段。
-add	当目标字段不存在时，设置目标字段。
-add-auto	当新值非空，且目标字段不存在时，设置目标字段。
-overwrite	总是设置目标字段。
-overwrite-auto	当新值非空，设置目标字段。
-"""
-enrichment_schema = {
-    'field': str,
-    'output_fields': [str],
-    'missing': str,
-    'mode': str
-}
-
-
-def validate_rule_schema(rule):
-    return Schema(enrichment_schema, ignore_extra_keys=True).validate(rule)
 
 
 class SourceADBMysql(object):
@@ -148,12 +124,6 @@ class ProduceToKafka(object):
             return e
 
 
-# 这里可以对消息进行处理后返回
-def deal_message(message, remote_record, rule):
-    # todo
-    return message
-
-
 # 函数入口
 def handler(event, context):
     """
@@ -177,8 +147,9 @@ def handler(event, context):
     topic_name = os.getenv("target_topic")
 
     rule_str = os.getenv("rule")
-    validate_rule_schema(rule_str)
-    rule = json.loads(rule_str)
+    rule_class = rule.EnrichmentRule()
+    if not rule_class.set_rule(rule_str):
+        raise Exception("unexpected rule schema")
 
     kafka_producer = ProduceToKafka(bootstrap_servers)
 
@@ -190,6 +161,7 @@ def handler(event, context):
     database = os.getenv("database")
     table = os.getenv("table")
 
+    # todo: switch dbType to choose adb mysql or postgre.
     adb_source = SourceADBMysql(host, port, user, password, database, table)
     evt = json.loads(event)
 
@@ -208,7 +180,7 @@ def handler(event, context):
         # 1. fetch
         remote_record = adb_source.fetch(value[rule["field"]])
         # 2. enrichment
-        dealt_message = deal_message(value, remote_record, rule)
+        dealt_message = rule_class.deal_message(value, remote_record)
         # 3. produce
         msg = kafka_producer.produce(topic_name, dealt_message['key'], dealt_message['value'])
         if msg is None:

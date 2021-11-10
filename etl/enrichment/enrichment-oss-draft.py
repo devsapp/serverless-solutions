@@ -4,39 +4,13 @@
 import logging
 import json
 import os
-from schema import Schema
 from kafka import KafkaProducer
 from kafka.errors import KafkaError
 
+import rule
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-
-
-# enrichment_schema is used to validate rules.
-# todo: move to layer
-"""
-field: pk in db, 对于 oss 采用单列匹配(对于 csv 文件，是否有多列匹配的需求？)
-output_fields: 取出的字段，拼接到 value 中
-missing: 源中缺失时默认填充值
-mode:
-    fill	当目标字段不存在或者值为空时，设置目标字段。
-    fill-auto	当新值非空，且目标字段不存在或者值为空时，设置目标字段。
-    add	当目标字段不存在时，设置目标字段。
-    add-auto	当新值非空，且目标字段不存在时，设置目标字段。
-    overwrite	总是设置目标字段。
-    overwrite-auto	当新值非空，设置目标字段。
-"""
-enrichment_schema = {
-    'field': str,
-    'output_fields': [str],
-    'missing': str,
-    'mode': str
-}
-
-
-def validate_rule_schema(rule):
-    return Schema(enrichment_schema, ignore_extra_keys=True).validate(rule)
 
 
 class SourceOSS(object):
@@ -89,12 +63,6 @@ class ProduceToKafka(object):
             return e
 
 
-# 这里可以对消息进行处理后返回
-def deal_message(message, remote_message, rule):
-    # todo
-    return message
-
-
 # 函数入口
 def handler(event, context):
     """
@@ -115,8 +83,9 @@ def handler(event, context):
     oss_csv_file_arn = os.getenv("oss_csv_file_arn")
 
     rule_str = os.getenv("rule")
-    validate_rule_schema(rule_str)
-    rule = json.loads(rule_str)
+    rule_class = rule.EnrichmentRule()
+    if not rule_class.set_rule(rule_str):
+        raise Exception("unexpected rule schema")
 
     kafka_producer = ProduceToKafka(bootstrap_servers)
     oss_source = SourceOSS(oss_csv_file_arn)
@@ -137,7 +106,7 @@ def handler(event, context):
         # 1. fetch
         remote_message = oss_source.fetch(value[rule["field"]])
         # 2. deal
-        dealt_message = deal_message(value, remote_message, rule)
+        dealt_message = rule_class.deal_message(value, remote_message)
         # 3. produce
         msg = kafka_producer.produce(topic_name, dealt_message['key'], dealt_message['value'])
         if msg is None:

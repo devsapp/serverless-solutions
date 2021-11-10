@@ -26,7 +26,6 @@ see: https://help.aliyun.com/document_detail/159702.html
 转换：同 Transformation
 
 [ ] 分裂
-    [ ] 跨区 Topic 复制
     [ ] 1 - n topic 分发 (Dynamic Routing)
     [ ] 1 - 1 topic 分裂 (Split)
   
