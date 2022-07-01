@@ -1,0 +1,19 @@
+Type: Application
+Name: AnalyticDBPostgreSQLSinkConnector
+Provider:
+  - 阿里云
+Version: 0.0.1
+Description: AnalyticDB Sink Connector for PostgreSQL
+HomePage: https://github.com/devsapp/serverless-io-sink
+Tags:
+  - FcSinkConnector
+  - EventBridge
+Category: 函数Connector
+Service:
+  函数计算:
+    Runtime: Python 3.6
+    Authorities:
+      - 创建函数
+      - 删除函数
+      - 创建服务
+      - 删除服务

@@ -1,0 +1,51 @@
+Type: Application
+Name: ClickHouseSinkConnector
+Provider:
+  - 阿里云
+Version: 0.0.3
+Description: ClickHouse Sink Connector
+HomePage: https://github.com/devsapp/serverless-io-sink
+Tags:
+  - FcSinkConnector
+  - EventBridge
+Category: 函数Connector
+Service:
+  函数计算:
+    Runtime: Python 3.6
+    Authorities:
+      - AliyunFCFullAccess
+Parameters:
+  type: object
+  additionalProperties: false # 不允许增加其他属性
+  required: # 必填项
+    - region
+    - serviceName
+    - functionName
+    - clickhouse_full_url
+    - template_sql
+  properties:
+    region:
+      title: 地域
+      type: string
+      default: cn-hangzhou
+      description: 创建应用所在的地区
+    serviceName:
+      title: 服务名
+      type: string
+      default: web-framework
+      description: 服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+    functionName:
+      title: 函数名
+      type: string
+      default: hapi
+      description:  函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-64 之间
+    clickhouse_full_url:
+      title: clickhouse_full_url
+      type: string
+      default: ''
+      description: 'clickhouse url'
+    template_sql:
+      title: template_sql
+      type: string
+      default: ''
+      description: '要执行的 sql 模板'
