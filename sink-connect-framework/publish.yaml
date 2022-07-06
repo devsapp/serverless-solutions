@@ -1,0 +1,63 @@
+Type: Application
+Name: SinkConnectFramework
+Provider:
+  - 阿里云
+Version: 0.0.3
+Description: Sink Connect Framework
+HomePage: https://github.com/devsapp/serverless-io-sink
+Tags:
+  - FcSinkConnector
+Category: 函数Connector
+Service:
+  函数计算:
+    Runtime: Python 3.9
+    Authorities:
+      - AliyunFCFullAccess
+      - AliyunLogFullAccess
+Parameters:
+  type: object
+  additionalProperties: false # 不允许增加其他属性
+  required: # 必填项
+    - region
+    - serviceName
+    - transformFunctionName
+    - sinkFunctionName
+    - dataSchema
+    - messageType
+  properties:
+    region:
+      title: 地域
+      type: string
+      default: cn-hangzhou
+      description: 创建应用所在的地区
+    serviceName:
+      title: 服务名
+      type: string
+      default: sink_connector
+      description: 服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+    transformFunctionName:
+      title: transform 函数名
+      type: string
+      default: transform
+      description: 服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+    sinkFunctionName:
+      title: sink 函数名
+      type: string
+      default: sink
+      description: 服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+    dataSchema:
+      title: 消息传递的 shema 类型
+      type: string
+      default: cloudEvent
+      description: 输入消息 schema
+      enum:
+        - customized
+        - cloudEvent
+    messageType:
+      title: 消息类型
+      type: string
+      default: single
+      description: 输入消息的类型：分批 or 单条消息
+      enum:
+        - batch
+        - single
