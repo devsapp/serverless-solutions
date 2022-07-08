@@ -53,7 +53,7 @@ services:
         handler: 'index.handler'
         environmentVariables: ${vars.sinkEnv}
         memorySize: 128
-        initializer: 'index.initializer'
+        initializer: 'index.initialize'
         initializationTimeout: 10
         instanceLifecycleConfig:
           preStop:

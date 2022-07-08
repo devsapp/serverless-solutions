@@ -101,7 +101,7 @@ class Sink(object):
 sink = Sink()
 
 
-def initializer(context):
+def initialize(context):
     """Sink function initializer.
         this method is called before the function invocation,
         and will be only called once in a specified container.
@@ -129,7 +129,7 @@ def initializer(context):
 
 def destroy(context):
     """Sink function deconstructor.
-        this method is called before the function container releasement.
+       This method is called as pre-stop, which will be executed before the function container releasement.
         todo: User should realize this method
 
     Args:
