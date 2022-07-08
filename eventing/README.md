@@ -1,1 +1,0 @@
-Serverless eventing related solutions
