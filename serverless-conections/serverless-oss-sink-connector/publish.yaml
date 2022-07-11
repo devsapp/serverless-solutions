@@ -1,9 +1,9 @@
 Type: Application
-Name: SinkConnectFramework
+Name: FCOssSinkConnector-Test
 Provider:
   - 阿里云
-Version: 0.0.3
-Description: Sink Connect Framework
+Version: 0.0.1
+Description: 函数计算 oss sink connector
 HomePage: https://github.com/devsapp/serverless-io-sink
 Tags:
   - FcSinkConnector
@@ -24,6 +24,9 @@ Parameters:
     - sinkFunctionName
     - dataSchema
     - messageType
+    - endpoint
+    - bucket
+    - object_prefix
   properties:
     region:
       title: 地域
@@ -33,7 +36,7 @@ Parameters:
     serviceName:
       title: 服务名
       type: string
-      default: sink_connector
+      default: oss_sink_connector
       description: 服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
     transformFunctionName:
       title: transform 函数名

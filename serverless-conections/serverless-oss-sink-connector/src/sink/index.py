@@ -2,7 +2,10 @@
 import json
 import logging
 import os
+import oss2
+import time
 
+from oss2 import exceptions
 from schema import Schema
 
 import sink_schema
@@ -30,10 +33,8 @@ class Sink(object):
         """
         self.connected = False
 
-
     def connect(self, sink_config):
         """Sink connector construct method.
-            todo: User should realize this method
 
         Args:
             sink_config: config of this sink connector
@@ -44,14 +45,27 @@ class Sink(object):
         Raises:
             None
         """
-        self.connected = True
-        self.sink_config = sink_config
-        pass
 
+        self.sink_config = sink_config
+        creds = context.credentials
+
+        try:
+            endpoint = self.sink_config["endpoint"]
+            bucket = self.sink_config["bucket"]
+            access_key_id = self.sink_config["access_key_id"]
+            access_key_secret = self.sink_config["access_key_secret"]
+            security_token = self.sink_config["security_token"]
+            auth = oss2.StsAuth(access_key_id, access_key_secret, security_token)
+            self.conn = oss2.Bucket(auth, endpoint, bucket)
+        except Exception as e:
+            logger.error(e)
+            logger.error(
+                "ERROR: Unexpected error: Could not connect to OSS instance.")
+            raise Exception(str(e))
+        self.connected = True
 
     def close(self):
         """Sink connector deconstruct method.
-            todo: User should realize this method
 
         Args:
             None
@@ -64,7 +78,6 @@ class Sink(object):
         """
         self.connected = False
         pass
-
 
     def is_connected(self):
         """Sink connector connect check.
@@ -80,14 +93,22 @@ class Sink(object):
          """
         return self.connected
 
+    def oss_file_exist(self, key):
+        try:
+            self.conn.get_object_meta(key)
+        except exceptions.NoSuchKey as err1:
+            return False, None
+        except Exception as err2:
+            logger.error("get oss key {%s} failed, err: %s", key, err2)
+            return False, err2
+        logger.info("file already exist, oss key: %s", key)
+        return True, None
 
     def sink(self, payload):
         """Sink operator.
-            todo: User should realize this method
 
         Args:
             payload: input payload
-            todo: xx
 
         Returns:
             None
@@ -95,8 +116,19 @@ class Sink(object):
         Raises:
             todo: xx
         """
-        return
-
+        filename = sink.sink_config["object_prefix"] + str(int(time.time()))
+        data = json.dumps(payload)
+        exist, e = self.oss_file_exist(filename)
+        while e is not None:
+            exist, e = self.oss_file_exist(filename)
+        if exist:
+            logger.error("upload oss abort, %s is exist in %s", filename, self.sink_config["bucket"])
+            return False
+        response = self.conn.put_object(filename, data)
+        if response.status != 200:
+            logger.error("upload oss failed, response: %s", response)
+            return False
+        return True
 
 sink = Sink()
 
@@ -119,6 +151,10 @@ def initialize(context):
     logger.info('initializing sink connect')
     sink_config_env = os.environ.get('SINK_CONFIG')
     sink_config = json.loads(sink_config_env)
+    creds = context.credentials
+    sink_config["access_key_id"] = creds.access_key_id
+    sink_config["access_key_secret"] = creds.access_key_secret
+    sink_config["security"] = creds.security_token
     if not sink_schema.validate_sink_config_schema(sink_config):
         logger.error("validate failed error: %s",
                      Schema(sink_schema.SINK_CONFIG_SCHEMA, ignore_extra_keys=True).validate(sink_config))
@@ -158,7 +194,6 @@ def handler(event, context):
          Exception.
      """
     try:
-
         payload = json.loads(event)
         # only single data type is validated here.
         if sink.sink_config['messageType'] == "single" and sink.sink_config["dataSchema"] == "cloudEvent":
@@ -171,7 +206,7 @@ def handler(event, context):
         if not sink.is_connected():
             raise Exception("unconnected sink target")
 
-        sink.sink(payload)
+        success = sink.sink(payload)
 
     except Exception as e:
         logger.error(e)
