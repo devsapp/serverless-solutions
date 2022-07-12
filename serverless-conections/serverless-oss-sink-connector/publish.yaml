@@ -42,12 +42,12 @@ Parameters:
       title: transform 函数名
       type: string
       default: transform
-      description: 服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+      description: transform 函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
     sinkFunctionName:
       title: sink 函数名
       type: string
       default: sink
-      description: 服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+      description: sink 函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
     dataSchema:
       title: 消息传递的 schema 类型
       type: string
