@@ -2,7 +2,7 @@ Type: Application
 Name: FCOssSinkConnector-Test
 Provider:
   - 阿里云
-Version: 0.0.1
+Version: dev
 Description: 函数计算 oss sink connector
 HomePage: https://github.com/devsapp/serverless-io-sink
 Tags:
@@ -49,7 +49,7 @@ Parameters:
       default: sink
       description: 服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
     dataSchema:
-      title: 消息传递的 shema 类型
+      title: 消息传递的 schema 类型
       type: string
       default: cloudEvent
       description: 输入消息 schema
@@ -64,3 +64,19 @@ Parameters:
       enum:
         - batch
         - single
+    endpoint:
+      title: endpoint
+      type: string
+      default: ''
+      description: '输入endpoint'
+    bucket:
+      title: bucket
+      type: string
+      default: ''
+      description: '输入bucket名称'
+    object_prefix:
+      title: object_prefix
+      type: string
+      default: ''
+      description: '输入将上传保存的文件名前缀'
+

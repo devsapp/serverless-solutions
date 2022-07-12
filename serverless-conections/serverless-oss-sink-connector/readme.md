@@ -1,20 +1,20 @@
-# ETLSinkConnectorFramework 帮助文档
+# FCOssSinkConnector 帮助文档
 
 <p align="center" class="flex justify-center">
     <a href="https://www.serverless-devs.com" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=KafkaToOSSConnector&type=packageType">
+    <img src="http://editor.devsapp.cn/icon?package=FCOssSinkConnector&type=packageType">
   </a>
-  <a href="http://www.devsapp.cn/details.html?name=KafkaToOSSConnector" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=KafkaToOSSConnector&type=packageVersion">
+  <a href="http://www.devsapp.cn/details.html?name=FCOssSinkConnector" class="ml-1">
+    <img src="http://editor.devsapp.cn/icon?package=FCOssSinkConnector&type=packageVersion">
   </a>
-  <a href="http://www.devsapp.cn/details.html?name=KafkaToOSSConnector" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=KafkaToOSSConnector&type=packageDownload">
+  <a href="http://www.devsapp.cn/details.html?name=FCOssSinkConnector" class="ml-1">
+    <img src="http://editor.devsapp.cn/icon?package=FCOssSinkConnector&type=packageDownload">
   </a>
 </p>
 
 <description>
 
-> ***ETL Sink Connector Framework***
+> ***函数计算 oss sink conncetor***
 
 </description>
 
@@ -49,8 +49,8 @@
 
 - 通过 [Serverless Devs Cli](https://www.serverless-devs.com/serverless-devs/install) 进行部署：
     - [安装 Serverless Devs Cli 开发者工具](https://www.serverless-devs.com/serverless-devs/install) ，并进行[授权信息配置](https://www.serverless-devs.com/fc/config) ；
-    - 初始化项目：`s init KafkaToOSSConnector -d KafkaToOSSConnector`   
-    - 进入项目，并进行项目部署：`cd KafkaToOSSConnector && s deploy -y`
+    - 初始化项目：`s init FCOssSinkConnector -d FCOssSinkConnector`   
+    - 进入项目，并进行项目部署：`cd FCOssSinkConnector && s deploy -y`
 
 </deploy>
 
@@ -58,17 +58,29 @@
 
 
 ## 应用简介
-本应用为框架应用，面向应用开发者。请勿直接发布本应用。
+本应用为函数计算 Oss sink connector。使用本应用可以将您的原始输入数据转存到您创建应用时填写的OSS中。本应用支持批量传输及单条数据传输；并支持 cloudEvent Schema 及自定义数据格式。如果您需要对数据进行转换，可以编写应用创建后的 transform 函数。否则您只需调用 sink 函数即可。
 
 ## 使用步骤
-
-1. git clone Sink Connector 应用框架：http://gitlab.alibaba-inc.com/serverless/serverless-solutions
-2. 将框架中 sink-connector-framework 目录拷贝到需要进行开发的位置；其中 transform 目录无需进行任何修改，需要对于 sink 目录下的函数代码文件按照业务需求进行修改：
-  a. Sink 部分需要针对数据处理目标特性，优化错误处理；对于无明确错误码的 Open API 基于 Http Code 进行错误处理及重试；
-  b. Sink 部分代码注释完善：要求每个函数都有注释，每个类都有注释；
-  c. 丰富 Sink 部分日志；
-3. 修改 publish.yaml ，按照应用的需要参数填写用户创建应用时的必填参数。具体可参考：https://github.com/Serverless-Devs/Serverless-Devs/discussions/439
-4. 进行测试。建议通过 EB 侧已经创建的应用进行测试。
+您可以通过应用中心或直接使用 s 工具进行部署。
+1. 准备资源：创建 oss 实例，并开启公网访问；
+2. 部署应用；参数按照需要进行填写；
+3. 进行测试。构建输入参数（dataSchema：cloudEvent）
+```
+{
+    "data":{
+        "requestId":"xx",
+    },
+    "id":"xx",
+    "source":"acs:mns",
+    "specversion":"1.0",
+    "type":"mns:Queue:SendMessage",
+    "datacontenttype":"application/json; charset\\u003dutf-8",
+    "time":"xx-xx-xxT00:00:00.000Z",
+    "subject":"acs:mns:cn-hangzhou:xxxx:queues/xxx",
+    "aliyunaccountid":"xx"
+}
+```
+之后调用 invokeFunction（控制台测试或使用 SDK）进行测试。
 
 
 </appdetail>

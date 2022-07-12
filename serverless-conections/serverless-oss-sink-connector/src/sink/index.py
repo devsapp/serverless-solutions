@@ -47,7 +47,6 @@ class Sink(object):
         """
 
         self.sink_config = sink_config
-        creds = context.credentials
 
         try:
             endpoint = self.sink_config["endpoint"]
