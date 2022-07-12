@@ -1,3 +1,6 @@
 .idea
 .s
 .DS_Store
+venv
+
+./site-packages
