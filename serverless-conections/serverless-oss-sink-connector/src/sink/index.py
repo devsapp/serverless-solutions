@@ -153,7 +153,7 @@ def initialize(context):
     creds = context.credentials
     sink_config["access_key_id"] = creds.access_key_id
     sink_config["access_key_secret"] = creds.access_key_secret
-    sink_config["security"] = creds.security_token
+    sink_config["security_token"] = creds.security_token
     if not sink_schema.validate_sink_config_schema(sink_config):
         logger.error("validate failed error: %s",
                      Schema(sink_schema.SINK_CONFIG_SCHEMA, ignore_extra_keys=True).validate(sink_config))
