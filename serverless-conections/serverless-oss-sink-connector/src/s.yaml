@@ -12,7 +12,7 @@ vars:
   transformEnv:
     TRANSFORM_CONFIG: '{"sink_service_name": "{{serviceName}}","sink_function_name": "{{sinkFunctionName}}","dataSchema": "{{dataSchema}}","messageType": "{{messageType}}"}'
   sinkEnv:
-    SINK_CONFIG: '{"dataSchema": "{{dataSchema}}","messageType": "{{messageType}}"}'
+    SINK_CONFIG: '{"dataSchema": "{{dataSchema}}","messageType": "{{messageType}}","endpoint": "{{endpoint}}","bucket": "{{bucket}}","object_prefix": "{{object_prefix}}"}'
 
 
 services:

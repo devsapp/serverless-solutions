@@ -14,7 +14,7 @@
 
 <description>
 
-> ***函数计算 oss sink conncetor***
+> ***函数计算 oss sink connector***
 
 </description>
 
@@ -42,8 +42,8 @@
 
 <appcenter>
 
-- :fire: 通过 [Serverless 应用中心](https://fcnext.console.aliyun.com/applications/create?template=KafkaToOSSConnector) ，
-[![Deploy with Severless Devs](https://img.alicdn.com/imgextra/i1/O1CN01w5RFbX1v45s8TIXPz_!!6000000006118-55-tps-95-28.svg)](https://fcnext.console.aliyun.com/applications/create?template=KafkaToOSSConnector)  该应用。 
+- :fire: 通过 [Serverless 应用中心](https://fcnext.console.aliyun.com/applications/create?template=FCOssSinkConnector) ，
+[![Deploy with Severless Devs](https://img.alicdn.com/imgextra/i1/O1CN01w5RFbX1v45s8TIXPz_!!6000000006118-55-tps-95-28.svg)](https://fcnext.console.aliyun.com/applications/create?template=FCOssSinkConnector)  该应用。 
 
 </appcenter>
 
