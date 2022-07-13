@@ -21,7 +21,8 @@
 
 
 ## 应用简介
-本应用可以将您的原始输入数据进过预处理之后，写入到您创建应用时填写的 OSS bucket 中，支持批量传输及单条数据传输，传输的数据格式支持 cloudEvent Shema 以及自定义格式。 本应用在事件数据传输中主要负责数据的数据预处理以及数据投递，其流程可参考下图：
+本应用可以将您的原始输入数据进过预处理之后，写入到您创建应用时填写的 OSS bucket 中，支持批量传输及单条数据传输，传输的数据格式支持 cloudEvent Schema 以及自定义格式。
+本应用在事件数据传输中主要负责数据的数据预处理以及数据投递，其流程可参考下图：
 
 ![简介图](https://img.alicdn.com/imgextra/i1/O1CN01E9a3ZD230u3yoFO84_!!6000000007194-2-tps-2864-1082.png)
 Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Service，最终投递到下游服务中，Sink Service 中包含两个功能函数：
@@ -29,13 +30,13 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 - Sink Function：数据投递函数，接收数据后将其投递到下游服务中。
 
 如果您需要对数据进行转换，可以编写应用创建后的 transform 函数。否则您只需调用 sink 函数即可。
+
 ## 前期准备
 使用该项目，推荐您拥有以下的产品权限 / 策略：
 
- | 服务/业务 | 函数计算 |     
- | --- |  --- |   
- | 权限/策略 | AliyunFCFullAccess<br>AliyunLogFullAccess<br>AliyunOSSFullAccess | 
-
+| 服务/业务 | 函数计算                                                             |     
+| --- |------------------------------------------------------------------|   
+| 权限/策略 | AliyunFCFullAccess<br>AliyunLogFullAccess<br>AliyunOSSFullAccess |     
 
 <codepre id="codepre">
 
