@@ -1,0 +1,32 @@
+[
+{
+    "data":{
+        "name":"xiaoMing",
+        "age":"23",
+        "gender":"male"
+    },
+    "id":"EF755211AE83630D7FD1052A357D556F",
+    "source":"acs:mns",
+    "specversion":"1.0",
+    "type":"mns:Queue:SendMessage",
+    "datacontenttype":"application/json; charset\\u003dutf-8",
+    "time":"2022-07-01T16:04:12.286Z",
+    "subject":"acs:mns:cn-hangzhou:xxx:queues/queueName",
+    "aliyunaccountid":"xxx"
+},
+{
+    "data":{
+        "name":"xiaoHong",
+        "age":"22",
+        "gender":"female"
+    },
+    "id":"EF755211AE83630D7FD1052A357D556F",
+    "source":"acs:mns",
+    "specversion":"1.0",
+    "type":"mns:Queue:SendMessage",
+    "datacontenttype":"application/json; charset\\u003dutf-8",
+    "time":"2022-07-01T16:04:12.286Z",
+    "subject":"acs:mns:cn-hangzhou:xxx:queues/queueName",
+    "aliyunaccountid":"xxx"
+}
+]

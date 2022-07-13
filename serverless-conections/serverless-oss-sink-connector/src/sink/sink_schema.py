@@ -19,11 +19,11 @@ MESSAGE_SCHEMA = {
 
 # SINK_CONFIG_SCHEMA is used to validate sink target config.
 SINK_CONFIG_SCHEMA = {
-    'dataSchema': str,
-    'messageType': str,
+    "eventSchema": str,
+    "batchOrNot": str,
     'endpoint': str,
     'bucket': str,
-    'object_prefix': str,
+    'pathPrefix': str,
     'access_key_id': str,
     'access_key_secret': str,
     'security_token': str,

@@ -5,14 +5,15 @@ access: default         #  密钥别名。
 vars:
   service:
     name: "{{serviceName}}"
-    description: 'demo for kafka batch etl to oss'
+    description: 'oss sink connect service'
     internetAccess: true
     role:
     logConfig: auto
   transformEnv:
-    TRANSFORM_CONFIG: '{"sink_service_name": "{{serviceName}}","sink_function_name": "{{sinkFunctionName}}","dataSchema": "{{dataSchema}}","messageType": "{{messageType}}"}'
+    TRANSFORM_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}"}'
+    DESTINATION_CONFIG: '{"service_name": "{{serviceName}}","function_name": "{{sinkFunctionName}}"}'
   sinkEnv:
-    SINK_CONFIG: '{"dataSchema": "{{dataSchema}}","messageType": "{{messageType}}","endpoint": "{{endpoint}}","bucket": "{{bucket}}","object_prefix": "{{object_prefix}}"}'
+    SINK_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}","endpoint": "{{endpoint}}","bucket": "{{bucket}}","pathPrefix": "{{pathPrefix}}"}'
 
 
 services:

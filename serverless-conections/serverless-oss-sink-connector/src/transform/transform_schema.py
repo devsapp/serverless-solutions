@@ -17,12 +17,16 @@ MESSAGE_SCHEMA = {
     #'data': data is user define,
 }
 
-# CONFIG_SCHEMA is used to validate transform config.
-CONFIG_SCHEMA = {
-    'sink_service_name': str,
-    'sink_function_name': str,
-    'dataSchema': str,
-    'messageType': str,
+# TRANSFORM_CONFIG_SCHEMA is used to validate transform config.
+TRANSFORM_CONFIG_SCHEMA = {
+    'eventSchema': str,
+    'batchOrNot': str,
+}
+
+# DESTINATION_CONFIG_SCHEMA is used to validate destination config.
+DESTINATION_CONFIG_SCHEMA = {
+    'service_name': str,
+    'function_name': str,
 }
 
 
@@ -42,10 +46,25 @@ def validate_message_schema(message):
 
 
 def validate_transform_config_schema(config):
-    """validate input message according to Message_SCHEMA.
+    """validate transform config according to ENV.
 
     Args:
         message: Origin message in cloud events schema from event bridge.
+
+    Returns:
+        config: Origin config.
+
+    Raises:
+        None.
+    """
+    return Schema(TRANSFORM_CONFIG_SCHEMA, ignore_extra_keys=True).is_valid(config)
+
+
+def validate_destination_config_schema(config):
+    """validate destination config according to ENV.
+
+    Args:
+        config: Origin config.
 
     Returns:
         bool: Whether the config is validated.
@@ -53,4 +72,4 @@ def validate_transform_config_schema(config):
     Raises:
         None.
     """
-    return Schema(CONFIG_SCHEMA, ignore_extra_keys=True).is_valid(config)
+    return Schema(DESTINATION_CONFIG_SCHEMA, ignore_extra_keys=True).is_valid(config)

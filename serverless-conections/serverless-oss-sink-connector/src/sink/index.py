@@ -4,6 +4,7 @@ import logging
 import os
 import oss2
 import time
+from retrying import retry
 
 from oss2 import exceptions
 from schema import Schema
@@ -11,7 +12,24 @@ from schema import Schema
 import sink_schema
 
 logger = logging.getLogger()
+default_retry_times = 3
 
+
+def result_need_retry(result):
+    """if the result needes to be retried.
+
+    Args:
+        result: bool, if the function call succeeded
+
+    Returns:
+        Bool, if result == True, return False otherwise return True
+
+    Raises:
+        None
+    """
+    if result:
+        return False
+    return True
 
 class Sink(object):
     """Sink Class.
@@ -103,19 +121,21 @@ class Sink(object):
         logger.info("file already exist, oss key: %s", key)
         return True, None
 
-    def sink(self, payload):
+    @retry(stop_max_attempt_number=default_retry_times, wait_exponential_multiplier=1000, retry_on_result=result_need_retry)
+    def deliver(self, payload):
         """Sink operator.
 
         Args:
             payload: input payload
 
         Returns:
-            None
+            Bool, if the function call succeeded
 
         Raises:
             todo: xx
         """
-        filename = sink.sink_config["object_prefix"] + str(int(time.time()))
+        logger.info('exec deliver')
+        filename = sink.sink_config["pathPrefix"] + str(int(time.time()))
         data = json.dumps(payload)
         exist, e = self.oss_file_exist(filename)
         while e is not None:
@@ -195,7 +215,7 @@ def handler(event, context):
     try:
         payload = json.loads(event)
         # only single data type is validated here.
-        if sink.sink_config['messageType'] == "single" and sink.sink_config["dataSchema"] == "cloudEvent":
+        if sink.sink_config['batchOrNot'] == "False" and sink.sink_config["eventSchema"] == "cloudEvent":
             logger.info("check single data with schema: cloudEvent")
             if not sink_schema.validate_message_schema(payload):
                 logger.error("validate failed error: %s",
@@ -205,7 +225,7 @@ def handler(event, context):
         if not sink.is_connected():
             raise Exception("unconnected sink target")
 
-        success = sink.sink(payload)
+        success = sink.deliver(payload)
 
     except Exception as e:
         logger.error(e)
