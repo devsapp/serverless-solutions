@@ -12,13 +12,13 @@ logger = logging.getLogger()
 logger.setLevel(level=logging.INFO)
 
 
-def sink_api_handler(context, config, payload):
+def sink_api_handler(context, destination_config, payload):
     """Send Data to FC Sink Function.
 
     Using FC SDK, call sink function with dealt data and transform configuration.
 
     Args:
-        config: transform config.
+        destination_config: destination config.
         payload: dealt data, following cloud event schema, or customized data.
 
     Returns:
@@ -36,8 +36,8 @@ def sink_api_handler(context, config, payload):
             accessKeySecret=creds.access_key_secret,
             securityToken=creds.security_token or '')
 
-        response = client.invoke_function(config["sink_service_name"],
-                                          config["sink_function_name"], json.dumps(payload),
+        response = client.invoke_function(destination_config["service_name"],
+                                          destination_config["function_name"], json.dumps(payload),
                                           headers={'x-fc-invocation-type': 'Async'})
         logger.info(response.data)
     except Exception as e:
@@ -60,9 +60,9 @@ def transform(transform_config, message):
     Raises:
         None.
     """
-    if transform_config["dataSchema"] == "cloudEvent":
+    if transform_config["eventSchema"] == "cloudEvent":
         logger.info("check single data with schema: cloudEvent")
-        if transform_config['messageType'] == "batch":
+        if transform_config['batchOrNot'] == "True":
             # validate batch data schema
             for single_message in message:
                 if not transform_schema.validate_message_schema(single_message):
@@ -96,12 +96,19 @@ def handler(event, context):
         transform_config = json.loads(transform_config_env)
         if not transform_schema.validate_transform_config_schema(transform_config):
             logger.error("validate failed error: %s",
-                         Schema(transform_schema.CONFIG_SCHEMA, ignore_extra_keys=True).validate(transform_config))
-            raise Exception("CONFIG_SCHEMA validate failed")
+                         Schema(transform_schema.TRANSFORM_CONFIG_SCHEMA, ignore_extra_keys=True).validate(transform_config))
+            raise Exception("TRANSFORM_CONFIG_SCHEMA validate failed")
+
+        destination_config_env = os.environ.get('DESTINATION_CONFIG')
+        destination_config = json.loads(destination_config_env)
+        if not transform_schema.validate_destination_config_schema(destination_config):
+            logger.error("validate failed error: %s",
+                         Schema(transform_schema.DESTINATION_CONFIG_SCHEMA, ignore_extra_keys=True).validate(destination_config))
+            raise Exception("DESTINATION_CONFIG_SCHEMA validate failed")
 
         payload = json.loads(event)
 
-        sink_api_handler(context, transform_config, transform(transform_config, payload))
+        sink_api_handler(context, destination_config, transform(transform_config, payload))
 
     except Exception as e:
         logger.error(e)
