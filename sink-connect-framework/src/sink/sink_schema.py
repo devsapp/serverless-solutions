@@ -20,8 +20,8 @@ MESSAGE_SCHEMA = {
 # SINK_CONFIG_SCHEMA is used to validate sink target config.
 # TODO: edit this
 SINK_CONFIG_SCHEMA = {
-    'dataSchema': str,
-    'messageType': str,
+    'eventSchema': str,
+    'batchOrNot': str,
 }
 
 

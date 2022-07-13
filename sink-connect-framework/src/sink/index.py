@@ -2,12 +2,30 @@
 import json
 import logging
 import os
+from retrying import retry
 
 from schema import Schema
 
 import sink_schema
 
 logger = logging.getLogger()
+default_retry_times = 3
+
+def result_need_retry(result):
+    """if the result needes to be retried.
+
+    Args:
+        result: bool, if the function call succeeded
+
+    Returns:
+        Bool, if result == True, return False otherwise return True
+
+    Raises:
+        None
+    """
+    if result:
+        return False
+    return True
 
 
 class Sink(object):
@@ -81,7 +99,8 @@ class Sink(object):
         return self.connected
 
 
-    def sink(self, payload):
+    @retry(stop_max_attempt_number=default_retry_times, wait_exponential_multiplier=1000, retry_on_result=result_need_retry)
+    def deliver(self, payload):
         """Sink operator.
             todo: User should realize this method
 
@@ -90,12 +109,19 @@ class Sink(object):
             todo: xx
 
         Returns:
-            None
+            Bool, if the function call succeeded
 
         Raises:
             todo: xx
         """
-        return
+        logger.info('exec deliver')
+
+        try:
+            pass
+        except Exception as e:
+            return False
+
+        return True
 
 
 sink = Sink()
@@ -160,7 +186,7 @@ def handler(event, context):
 
         payload = json.loads(event)
         # only single data type is validated here.
-        if sink.sink_config['messageType'] == "single" and sink.sink_config["dataSchema"] == "cloudEvent":
+        if sink.sink_config['batchOrNot'] == "False" and sink.sink_config["eventSchema"] == "cloudEvent":
             logger.info("check single data with schema: cloudEvent")
             if not sink_schema.validate_message_schema(payload):
                 logger.error("validate failed error: %s",
@@ -170,7 +196,7 @@ def handler(event, context):
         if not sink.is_connected():
             raise Exception("unconnected sink target")
 
-        sink.sink(payload)
+        sink.deliver(payload)
 
     except Exception as e:
         logger.error(e)
