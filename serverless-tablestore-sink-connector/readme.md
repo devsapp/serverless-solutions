@@ -1,14 +1,14 @@
-# FcTableStoreSinkConnector 帮助文档
+# TableStoreSinkConnector 帮助文档
 
 <p align="center" class="flex justify-center">
     <a href="https://www.serverless-devs.com" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=FCTablestoreSinkConnector&type=packageType">
+    <img src="http://editor.devsapp.cn/icon?package=TableStoreSinkConnector&type=packageType">
   </a>
-  <a href="http://www.devsapp.cn/details.html?name=FCTablestoreSinkConnector" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=FCTablestoreSinkConnector&type=packageVersion">
+  <a href="http://www.devsapp.cn/details.html?name=TableStoreSinkConnector" class="ml-1">
+    <img src="http://editor.devsapp.cn/icon?package=TableStoreSinkConnector&type=packageVersion">
   </a>
-  <a href="http://www.devsapp.cn/details.html?name=FCTablestoreSinkConnector" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=FCTablestoreSinkConnector&type=packageDownload">
+  <a href="http://www.devsapp.cn/details.html?name=TableStoreSinkConnector" class="ml-1">
+    <img src="http://editor.devsapp.cn/icon?package=TableStoreSinkConnector&type=packageDownload">
   </a>
 </p>
 
@@ -51,15 +51,15 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 
 <appcenter>
 
-- :fire: 通过 [Serverless 应用中心](https://fcnext.console.aliyun.com/applications/create?template=FCTablestoreSinkConnector) ，
-[![Deploy with Severless Devs](https://img.alicdn.com/imgextra/i1/O1CN01w5RFbX1v45s8TIXPz_!!6000000006118-55-tps-95-28.svg)](https://fcnext.console.aliyun.com/applications/create?template=FCTablestoreSinkConnector)  该应用。 
+- :fire: 通过 [Serverless 应用中心](https://fcnext.console.aliyun.com/applications/create?template=TableStoreSinkConnector) ，
+[![Deploy with Severless Devs](https://img.alicdn.com/imgextra/i1/O1CN01w5RFbX1v45s8TIXPz_!!6000000006118-55-tps-95-28.svg)](https://fcnext.console.aliyun.com/applications/create?template=TableStoreSinkConnector)  该应用。 
 
 </appcenter>
 
 - 通过 [Serverless Devs Cli](https://www.serverless-devs.com/serverless-devs/install) 进行部署：
     - [安装 Serverless Devs Cli 开发者工具](https://www.serverless-devs.com/serverless-devs/install) ，并进行[授权信息配置](https://www.serverless-devs.com/fc/config) ；
-    - 初始化项目：`s init FcTableStoreSinkConnector -d FcTableStoreSinkConnector`   
-    - 进入项目，并进行项目部署：`cd FcTableStoreSinkConnector && s deploy -y`
+    - 初始化项目：`s init TableStoreSinkConnector -d TableStoreSinkConnector`   
+    - 进入项目，并进行项目部署：`cd TableStoreSinkConnector && s deploy -y`
 
 </deploy>
 
@@ -154,7 +154,7 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 
 #### s 工具调用
 应用部署完成后，按照如下步骤进行通过 s 工具进行函数调用：
-1. 进入应用项目工程下，在 s.yml 查找应用初始化时输入的 `batchOrNot` 值，若：
+1. 进入应用项目工程下，在 s.yaml 查找应用初始化时输入的 `batchOrNot` 值，若：
    - `batchOrNot` 为 False：将文件 event-template/sink-single-event.json 中的值修改为目标值后，执行 `s sink invoke --event-file event-template/sink-single-event.json` 进行函数调用
    - `batchOrNot` 为 True：将文件 event-template/sink-batch-event.json 中的值修改为目标值后，执行 `s sink invoke --event-file event-template/sink-batch-event.json` 进行函数调用
 2. 函数调用完成后，可以登陆到 [tablestore 控制台](https://otsnext.console.aliyun.com/)查看目标数据表中是否已经写入数据。
@@ -171,7 +171,7 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 本应用创建后会生成两个函数：transform 函数及 sink 函数。如果您需要对原始数据进行处理，可以编写 transform 函数中的 transform 方法，以便按照您需要的方式对数据进行预处理。
 
 #### 修改数据库存入点及存入方式
-本应用默认将原始数据每条生成一个记录，并将整体 json decode 后存入 data 表中。如果您需要自定义转储方式，可以对 sink 函数 sink() 方法中的 tablestore 语句进行修改。
+本应用默认将原始数据每条生成一个记录，并将整体 json decode 后存入 data 表中。如果您需要自定义转储方式，可以对 sink 函数 deliver() 方法中的 tablestore 语句进行修改。
 
 
 
