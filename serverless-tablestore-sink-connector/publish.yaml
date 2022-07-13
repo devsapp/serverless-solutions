@@ -1,5 +1,5 @@
 Type: Application
-Name: FcTableStoreSinkConnector
+Name: TableStoreSinkConnector
 Provider:
   - 阿里云
 Version: dev
