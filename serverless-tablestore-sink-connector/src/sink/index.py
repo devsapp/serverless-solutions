@@ -70,7 +70,6 @@ class Sink(object):
         Raises:
             None
         """
-        self.connected = True
         primary_keys_name = sink_config['primaryKeysName']
         rows_name = sink_config['colsName']
         self.sink_config = sink_config
@@ -93,7 +92,7 @@ class Sink(object):
                                         access_key_secret=access_key_secret,
                                         instance_name=self.sink_config['instanceName'],
                                         sts_token=security_token, socket_timeout=20)
-
+            self.connected = True
         except Exception as e:
             logger.error(e)
             logger.error(

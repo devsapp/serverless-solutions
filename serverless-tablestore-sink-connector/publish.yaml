@@ -76,7 +76,7 @@ Parameters:
       default: sink
       description: 数据投递函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
     eventSchema:
-      title: 事件传递的 shema 类型
+      title: 事件传递的 schema 类型
       type: string
       default: cloudEvent
       description: 输入事件 schema 类型
