@@ -36,7 +36,7 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 
 | 服务/业务 | 函数计算 |     
 | --- |  --- |   
-| 权限/策略 | AliyunFCFullAccess</br>AliyunLogFullAccess |     
+| 权限/策略 | AliyunFCFullAccess<br>AliyunLogFullAccess |     
 
 
 <codepre id="codepre">

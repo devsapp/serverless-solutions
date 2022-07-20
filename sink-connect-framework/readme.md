@@ -18,17 +18,25 @@
 
 </description>
 
-<table>
+## 应用简介
+本应用为通用 serverless fc sink connector 框架。该框架适用于事件传输/数据处理流程中的预处理及投递功能。
+框架由两个函数组成：transform function 及 sink function，框架流程如下图所示：
+
+![流程图](https://img.alicdn.com/imgextra/i1/O1CN01E9a3ZD230u3yoFO84_!!6000000007194-2-tps-2864-1082.png)
+
+Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Service，最终投递到下游服务中，Sink Service 中包含两个功能函数：
+- Transform Function： 数据预处理函数，可自定义预处理逻辑，处理后的源端数据会被发送到 Sink Function 中。
+- Sink Function：数据投递函数，接收数据后将其投递到下游服务中。
+
+本应用为框架应用，面向应用开发者。请勿直接发布本应用。
+
 
 ## 前期准备
 使用该项目，推荐您拥有以下的产品权限 / 策略：
 
 | 服务/业务 | 函数计算 |     
 | --- |  --- |   
-| 权限/策略 | AliyunFCFullAccess</br>AliyunLogFullAccess |     
-
-
-</table>
+| 权限/策略 | AliyunFCFullAccess<br>AliyunLogFullAccess |     
 
 <codepre id="codepre">
 
@@ -57,9 +65,6 @@
 <appdetail id="flushContent">
 
 
-## 应用简介
-本应用为框架应用，面向应用开发者。请勿直接发布本应用。
-
 ## 使用步骤
 
 1. git clone Sink Connector 应用框架：http://gitlab.alibaba-inc.com/serverless/serverless-solutions
@@ -69,6 +74,65 @@
   c. 丰富 Sink 部分日志；
 3. 修改 publish.yaml ，按照应用的需要参数填写用户创建应用时的必填参数。具体可参考：https://github.com/Serverless-Devs/Serverless-Devs/discussions/439
 4. 进行测试。建议通过 EB 侧已经创建的应用进行测试。
+
+#### 常用命令
+
+应用中心支持的常用命令
+s cli registry -h
+s cli registry publish
+s cli registry delete --name-version ETLFramework@0.0.1 --type Application
+
+本地测试应用
+s init ETLFramework
+s deploy -t s.yaml
+s sink deploy -t s.yaml
+s remove -y
+
+应用文档编写：
+在publish.yaml目录下，执行 s cli alireadme
+
+#### 开发规范
+##### 函数接口 Schema
+
+参考本文开篇架构图，其中涉及函数间及函数与外部系统的交互有以下几处：
+1. Connector - FC Transform 函数；
+2. Connector - FC Sink 函数；
+3. FC Transform 函数 - FC Sink 函数。
+
+为方便统一，我们规定这三种交互方式的数据结构有两类：
+1. 标准的 cloud event 事件（推荐模式）：
+```json
+{
+    "data":{
+        "requestId":"62BF1AFC31373136413A6AB2",
+        "messageId":"EF755211AE83630D7FD1052A357D556F",
+        "messageBody":"I am test message"
+    },
+    "id":"EF755211AE83630D7FD1052A357D556F",
+    "source":"acs:mns",
+    "specversion":"1.0",
+    "type":"mns:Queue:SendMessage",
+    "datacontenttype":"application/json; charset\\u003dutf-8",
+    "time":"2022-07-01T16:04:12.286Z",
+    "subject":"acs:mns:cn-hangzhou:1026899168480100:queues/liuxia-mns-fc-0629-v2",
+    "aliyunaccountid":"1026899168480100"
+}
+```
+
+2. custom 事件：
+string 等类型。custom 事件主要是为了支持 EventBridge 的事件内容转换功能，支持任意格式的事件内容。
+
+##### 函数对外透露参数规范
+由于 Sink 包含不同的目标，所以需要用户在创建 sink 前填写对应服务的相关参数。我们规定 Sink 函数所需要的参数统一设计为使用 SINK_CONFIG 一个环境变量。用户在前端分开填写所需参数，之后由我们的 Publish.yaml 规定参数的传入。如：
+```
+SINK_CONFIG: {
+  "access_key": "xxx",
+  "access_secret": "xxx",
+  "bucket": "xxx",
+  "object_prefix": "xxx"
+}
+
+```
 
 
 </appdetail>
