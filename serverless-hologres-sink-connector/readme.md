@@ -76,6 +76,7 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 - hologress 数据表，按需初始化主键以及属性
   ![新建数据表](https://img.alicdn.com/imgextra/i4/O1CN01JvbfOt1Mx2rtpRQWU_!!6000000001500-2-tps-3544-900.png)
   ![初始化字段](https://img.alicdn.com/imgextra/i4/O1CN01JC4md31wUUL4dcJ9H_!!6000000006311-2-tps-3564-1004.png)
+
 ### 访问控制
 
 依次进行如下访问控制权限操作：
