@@ -10,7 +10,7 @@ import psycopg2
 import sink_schema
 
 logger = logging.getLogger()
-default_retry_times = 0
+default_retry_times = 3
 
 def result_need_retry(result):
     """if the result needes to be retried.
