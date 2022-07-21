@@ -13,7 +13,7 @@ vars:
     TRANSFORM_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}"}'
     DESTINATION_CONFIG: '{"service_name": "{{serviceName}}","function_name": "{{sinkFunctionName}}"}'
   sinkEnv:
-    SINK_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}","endpoint": "{{endpoint}}","bucket": "{{bucket}}","pathPrefix": "{{pathPrefix}}"}'
+    SINK_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}","endpoint": "{{endpoint}}","bucket": "{{bucket}}","objectPathPrefix": "{{objectPathPrefix}}"}'
 
 
 services:
