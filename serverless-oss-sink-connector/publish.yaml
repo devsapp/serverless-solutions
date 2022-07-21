@@ -78,5 +78,5 @@ Parameters:
       title: objectPathPrefix
       type: string
       default: ''
-      description: OSS object 名称（bucket里面的目录 ）
+      description: OSS object 名称,最终命名为objectPathPrefix_timestamp
 
