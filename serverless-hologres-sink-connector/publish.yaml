@@ -31,14 +31,12 @@ Parameters:
     - password
     - port
     - tableName
-    - primaryKeysName
-    - colsName
   properties:
     region:
       title: 地域
       type: string
       default: cn-hangzhou
-      description: 创建应用所在的地区
+      description: '创建应用所在的地区'
       enum:
         - cn-beijing
         - cn-hangzhou
@@ -63,22 +61,22 @@ Parameters:
       title: 服务名
       type: string
       default: sink_connector
-      description: 服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+      description: '服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间'
     transformFunctionName:
       title: transform 函数名
       type: string
       default: transform
-      description: 数据预处理函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+      description: '数据预处理函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间'
     sinkFunctionName:
       title: sink 函数名
       type: string
       default: sink
-      description: 数据投递函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+      description: '数据投递函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间'
     eventSchema:
       title: 事件传递的 shema 类型
       type: string
       default: cloudEvent
-      description: 输入事件 schema 类型
+      description: '输入事件 schema 类型'
       enum:
         - customized
         - cloudEvent
@@ -86,43 +84,46 @@ Parameters:
       title: 是否批处理事件入参
       type: string
       default: "False"
-      description: 为 False 时，会将单条事件消息作为函数入参对 sink 函数发起调用，每次调用只写入一条消息；为 True 时，会将多条事件消息作为一批函数入参对 sink 函数发起调用，每次调用可写入一批消息
+      description: '为 False 时，会将单条事件消息作为函数入参对 sink 函数发起调用，每次调用只写入一条消息；为 True 时，会将多条事件消息作为一批函数入参对 sink 函数发起调用，每次调用可写入一批消息'
       enum:
         - "False"
         - "True"
     context:
       title: context
       type: string
+      default: "hologres sink connector"
       description: '输入应用名，用于记录查询日志时识别SQL代表的应用含义'
-    host:
-      title: host
+    hologresHost:
+      title: hologresHost
       type: string
       description: '输入 hologres 实例网络地址'
-    database:
-      title: database
+    hologresDatabase:
+      title: hologresDatabase
       type: string
       description: '输入 hologres 数据库名称'
     user:
       title: user
       type: password
-      description: '输入 hologres 登录用户名，该字段为阿里云账号的 AccessKey ID，由于包含账号密钥信息，因此不建议将应用放到 Github 上允许公开访问'
+      description: '输入 hologres 登录用户名，该字段为阿里云账号的 AccessKey ID，由于包含账号密钥信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问'
     password:
       title: password
       type: password
-      description: '输入 hologres 登录密码，该字段为阿里云账号的 AccessKey Secret，由于包含账号密钥信息，因此不建议将应用放到 Github 上允许公开访问'
+      description: '输入 hologres 登录密码，该字段为阿里云账号的 AccessKey Secret，由于包含账号密钥信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问'
     port:
       title: port
       type: string
       description: '输入 hologres 的实例端口'
-    tableName:
-      title: tablestore 数据表名称
+    hologresTableName:
+      title: hologresTableName
       type: string
       description: '输入 hologres 的数据表名称'
     primaryKeysName:
-      title: tablestore 数据表主键名称
+      title: 数据表主键名称
       type: string
+      default: ''
       description: '输入 hologres 数据表主键，多键用","分割'
     colsName:
-      title: tablestore 数据表属性列名称
+      title: 数据表属性列名称
       type: string
+      default: ''
       description: '输入 hologres 数据表属性列名称，多列属性名用","分割'

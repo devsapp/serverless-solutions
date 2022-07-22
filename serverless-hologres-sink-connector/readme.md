@@ -96,7 +96,7 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 - tableName：是否与目标 hologres 数据表名称匹配
 - primaryKeysName：是否与目标 hologres 数据表主键匹配
 
->注：由于 user 以及 password 均为敏感信息，因此不建议将该项目放到 Github 上并设置为公共读
+>注：由于 user 以及 password 均为敏感信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问
 
 ### 参数介绍
 
