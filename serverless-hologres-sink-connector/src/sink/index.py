@@ -28,6 +28,21 @@ def result_need_retry(result):
         return False
     return True
 
+
+def retry_if_psql_exception(exception):
+    """Whether the exception needs to be retried.
+
+    Args:
+        exception - exception raised by deliver method
+
+    Returns:
+        Whether it is necessary to retry
+
+    Raises:
+        None
+    """
+    return isinstance(exception, psycopg2.Error)
+
 class Sink(object):
     """Sink Class.
 
@@ -59,14 +74,14 @@ class Sink(object):
             None
 
         Raises:
-            None
+            psycopg2.OperationalError
+            Exception
         """
-
         primary_keys_name = sink_config['primaryKeysName']
         colsName = sink_config['colsName']
         self.sink_config = sink_config
-        self.sink_config['primaryKeysName'] = primary_keys_name.split(',')
-        self.sink_config['colsName'] = colsName.split(',')
+        self.sink_config['primaryKeysName'] = [] if (primary_keys_name.strip() == '') else primary_keys_name.split(',')
+        self.sink_config['colsName'] = [] if (colsName.strip() == '') else colsName.split(',')
         self.sink_config['port'] = int(sink_config['port'])
         try:
             self.conn = psycopg2.connect(host=self.sink_config['host'],
@@ -76,11 +91,15 @@ class Sink(object):
                                          password=self.sink_config['password'],
                                          application_name=self.sink_config['context'])
             self.connected = True
+        except psycopg2.OperationalError as pe:
+            logger.error(pe)
+            logger.error(
+                "ERROR: psycopg2 OperationalError: Could not connect to Hologres instance.")
+            raise pe
         except Exception as e:
             logger.error(e)
             logger.error(
-                "ERROR: Unexpected error: Could not connect to Tablestore instance.")
-            raise Exception(str(e))
+                "ERROR: unknown Error: Could not connect to Hologres instance.")
         pass
 
 
@@ -115,7 +134,8 @@ class Sink(object):
          """
         return self.connected
 
-    @retry(stop_max_attempt_number=default_retry_times, wait_exponential_multiplier=1000, retry_on_result=result_need_retry)
+    @retry(stop_max_attempt_number=default_retry_times, wait_exponential_multiplier=1000,
+           retry_on_result=result_need_retry, retry_on_exception=retry_if_psql_exception)
     def deliver(self, payload):
         """Sink operator.
             deliver data to hologres
@@ -124,21 +144,33 @@ class Sink(object):
             payload: input payload
 
         Returns:
-            Failed data list
+            None
 
         Raises:
+            psycopg2.OperationalError
             Exception
         """
+
         data_list = []
         if self.sink_config['batchOrNot'] == "True":
             for single_payload in payload:
                 data_list.append(single_payload['data'])
         else:
             data_list.append(payload['data'])
+        try:
+            deliver_success = self._write_data(data_list)
+            return deliver_success
+        except psycopg2.Error as pe:
+            logger.error(pe)
+            logger.error(
+                "ERROR: psycopg2 Error: write data to Hologres table: %s failed." % self.sink_config['tableName'])
+            raise pe
+        except Exception as e:
+            logger.error(e)
+            logger.error(
+                "ERROR: unknown error: write data to Hologres table: %s failed." % self.sink_config['tableName'])
+            raise e
 
-        deliver_success = self._write_data(data_list)
-
-        return deliver_success
 
     def _write_data(self, data_list):
         """Inner method to write data to hologres instance.
@@ -149,7 +181,8 @@ class Sink(object):
         Returns:
 
         Raises:
-            MysqlException
+            psycopg2.OperationalError
+            Exception
         """
         primary_keys_name = self.sink_config['primaryKeysName']
         cols_name = self.sink_config['colsName']
@@ -225,11 +258,11 @@ class Sink(object):
         with self.conn.cursor() as cursor:
             cursor.execute(insert_sql)
             self.conn.commit()
-            cursor.execute(select_sql)
 
+            cursor.execute(select_sql)
             result = cursor.fetchall()
             if not result:
-                logger.error("fetch none resule")
+                logger.error("fetch none result")
                 return False
 
             logger.info("fetch result: " + str(result))
@@ -297,36 +330,32 @@ def handler(event, context):
      Raises:
          Exception.
      """
-    try:
 
-        payload = json.loads(event)
+    payload = json.loads(event)
 
-        # only single data type is validated here.
-        if (sink.sink_config['batchOrNot'] == "False") and (sink.sink_config["eventSchema"] == "cloudEvent"):
-            logger.info("check single data with schema: cloudEvent")
-            if not sink_schema.validate_message_schema(payload):
+    # only single data type is validated here.
+    if (sink.sink_config['batchOrNot'] == "False") and (sink.sink_config["eventSchema"] == "cloudEvent"):
+        logger.info("check single data with schema: cloudEvent")
+        if not sink_schema.validate_message_schema(payload):
+            logger.error("validate failed error: %s",
+                         Schema(sink_schema.MESSAGE_SCHEMA, ignore_extra_keys=True).validate(payload))
+            raise Exception("MESSAGE_SCHEMA validate failed")
+
+    if (sink.sink_config['batchOrNot'] == "True") and (sink.sink_config["eventSchema"] == "cloudEvent"):
+        logger.info("check batch data with schema: cloudEvent")
+        for single_payload in payload:
+            if not sink_schema.validate_message_schema(single_payload):
                 logger.error("validate failed error: %s",
-                             Schema(sink_schema.MESSAGE_SCHEMA, ignore_extra_keys=True).validate(payload))
+                             Schema(sink_schema.MESSAGE_SCHEMA, ignore_extra_keys=True).validate(single_payload))
                 raise Exception("MESSAGE_SCHEMA validate failed")
 
-        if (sink.sink_config['batchOrNot'] == "True") and (sink.sink_config["eventSchema"] == "cloudEvent"):
-            logger.info("check batch data with schema: cloudEvent")
-            for single_payload in payload:
-                if not sink_schema.validate_message_schema(single_payload):
-                    logger.error("validate failed error: %s",
-                                 Schema(sink_schema.MESSAGE_SCHEMA, ignore_extra_keys=True).validate(single_payload))
-                    raise Exception("MESSAGE_SCHEMA validate failed")
+    if not sink.is_connected():
+        raise Exception("unconnected sink target")
 
-        if not sink.is_connected():
-            raise Exception("unconnected sink target")
+    deliver_success = sink.deliver(payload)
 
-        deliver_success = sink.deliver(payload)
+    if not deliver_success:
+        raise Exception("Fail to write hologress.")
 
-        if deliver_success == False:
-            return json.dumps({"success": False, "error_message": "Fail to write hologress"})
 
-    except Exception as e:
-        logger.error(e)
-        return json.dumps({"success": False, "error_message": str(e)})
-
-    return json.dumps({"success": True, "error_message": ""})
+    return "success"
