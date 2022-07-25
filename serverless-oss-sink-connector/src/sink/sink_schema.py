@@ -23,7 +23,7 @@ SINK_CONFIG_SCHEMA = {
     "batchOrNot": str,
     'endpoint': str,
     'bucket': str,
-    'pathPrefix': str,
+    'objectPathPrefix': str,
     'access_key_id': str,
     'access_key_secret': str,
     'security_token': str,

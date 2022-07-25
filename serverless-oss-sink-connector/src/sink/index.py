@@ -31,6 +31,7 @@ def result_need_retry(result):
         return False
     return True
 
+
 class Sink(object):
     """Sink Class.
 
@@ -121,7 +122,8 @@ class Sink(object):
         logger.info("file already exist, oss key: %s", key)
         return True, None
 
-    @retry(stop_max_attempt_number=default_retry_times, wait_exponential_multiplier=1000, retry_on_result=result_need_retry)
+    @retry(stop_max_attempt_number=default_retry_times, wait_exponential_multiplier=1000,
+           retry_on_result=result_need_retry)
     def deliver(self, payload):
         """Sink operator.
 
@@ -135,7 +137,7 @@ class Sink(object):
             todo: xx
         """
         logger.info('exec deliver')
-        filename = sink.sink_config["pathPrefix"] + str(int(time.time()))
+        filename = sink.sink_config["objectPathPrefix"] + "_" + str(int(time.time()))
         data = json.dumps(payload)
         exist, e = self.oss_file_exist(filename)
         while e is not None:
@@ -148,6 +150,7 @@ class Sink(object):
             logger.error("upload oss failed, response: %s", response)
             return False
         return True
+
 
 sink = Sink()
 
