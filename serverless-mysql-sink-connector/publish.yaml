@@ -67,27 +67,27 @@ Parameters:
         - "True"
         - "False"
     host:
-      title: host
+      title: mysql 数据库公网地址
       type: string
       default: ''
       description: '数据库连接地址，请填写公网地址'
     port:
-      title: port
+      title: mysql 数据库端口号
       type: string
       default: '3306'
       description: '数据库端口号'
     user:
-      title: user
-      type: string
+      title: mysql 数据库登录用户名
+      type: password
       default: ''
-      description: '数据库访问账号'
+      description: '数据库访问账号，由于包含账号密钥信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问'
     password:
-      title: password
-      type: string
+      title: mysql 数据库登录密码
+      type: password
       default: ''
-      description: '数据库密码'
+      description: '数据库访问密码，由于包含账号密钥信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问'
     database:
-      title: database
+      title: mysql 数据库库名
       type: string
       default: ''
-      description: '数据库名称'
+      description: '数据库名称，用于 sink 目标'

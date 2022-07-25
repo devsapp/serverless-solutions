@@ -70,7 +70,9 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 您可以通过应用中心或直接使用 s 工具进行部署。
 1. 准备资源：创建 mysql 实例，并开启公网访问；
 2. 部署应用；参数按照需要进行填写；
-3. 进行测试。构建输入参数（dataSchema：cloudEvent）
+>注：应用模板内参数中的 user 以及 password 均为敏感信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问
+
+4. 进行测试。构建输入参数（dataSchema：cloudEvent）
 ```
 {
     "data":{
