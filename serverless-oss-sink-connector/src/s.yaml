@@ -11,7 +11,7 @@ vars:
     logConfig: auto
   transformEnv:
     TRANSFORM_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}"}'
-    DESTINATION_CONFIG: '{"service_name": "{{serviceName}}","function_name": "{{sinkFunctionName}}"}'
+    DESTINATION_CONFIG: '{"serviceName": "{{serviceName}}","functionName": "{{sinkFunctionName}}"}'
   sinkEnv:
     SINK_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}","endpoint": "{{endpoint}}","bucket": "{{bucket}}","objectPathPrefix": "{{objectPathPrefix}}"}'
 
