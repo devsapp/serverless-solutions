@@ -29,17 +29,16 @@ Parameters:
     - endpoint
     - tableName
     - primaryKeysName
-    - colsName
   properties:
     accountID:
       title: 阿里云账号
       type: string
-      description: 创建应用所用的阿里云账号 ID
+      description: '创建应用所用的阿里云账号 ID'
     region:
       title: 地域
       type: string
       default: cn-hangzhou
-      description: 创建应用所在的地区
+      description: '创建应用所在的地区'
       enum:
         - cn-beijing
         - cn-hangzhou
@@ -64,22 +63,22 @@ Parameters:
       title: 服务名
       type: string
       default: sink_connector
-      description: 服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+      description: '服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间'
     transformFunctionName:
       title: transform 函数名
       type: string
       default: transform
-      description: 数据预处理函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+      description: '数据预处理函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间'
     sinkFunctionName:
       title: sink 函数名
       type: string
       default: sink
-      description: 数据投递函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+      description: '数据投递函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间'
     eventSchema:
       title: 事件传递的 schema 类型
       type: string
       default: cloudEvent
-      description: 输入事件 schema 类型
+      description: '输入事件 schema 类型'
       enum:
         - customized
         - cloudEvent
@@ -87,27 +86,28 @@ Parameters:
       title: 是否批处理事件入参
       type: string
       default: "False"
-      description: 为 False 时，会将单条事件消息作为函数入参对 sink 函数发起调用，每次调用只写入一条消息；为 True 时，会将多条事件消息作为一批函数入参对 sink 函数发起调用，每次调用可写入一批消息
+      description: '为 False 时，会将单条事件消息作为函数入参对 sink 函数发起调用，每次调用只写入一条消息；为 True 时，会将多条事件消息作为一批函数入参对 sink 函数发起调用，每次调用可写入一批消息'
       enum:
         - "False"
         - "True"
-    endpoint:
+    tablestoreEndpoint:
       title: tablestore 实例访问地址
       type: string
-      description: 输入 tablestore 实例访问地址
-    instanceName:
+      description: '输入 tablestore 实例访问地址'
+    tablestoreInstanceName:
       title: tablestore 实例名称
       type: string
-      description: 输入 tablestore 实例名称
+      description: '输入 tablestore 实例名称'
     tableName:
       title: tablestore 数据表名称
       type: string
-      description: 输入 tablestore 数据表名称
+      description: '输入 tablestore 数据表名称'
     primaryKeysName:
       title: tablestore 数据表主键名称
       type: string
-      description: 输入 tablestore 数据表主键，多键用","分割
+      description: '输入 tablestore 数据表主键，多键用","分割'
     colsName:
-      title: tablestore 数据表属性列名称
+      title: tablestore 数据表属性列名称[非必填]
       type: string
-      description: 输入 tablestore 数据表属性列名称，多列属性名用","分割
+      default: ""
+      description: '输入 tablestore 数据表属性列名称，多列属性名用","分割'

@@ -11,6 +11,7 @@ from tablestore import PutRowItem
 from tablestore import Row
 from tablestore import RowExistenceExpectation
 from tablestore import TableInBatchWriteRowItem
+from tablestore import OTSServiceError
 from retrying import retry
 
 import sink_schema
@@ -33,6 +34,20 @@ def result_need_retry(result):
     if result:
         return False
     return True
+
+def retry_if_ots_exception(exception):
+    """Whether the exception needs to be retried.
+
+    Args:
+        exception - exception raised by deliver method
+
+    Returns:
+        Whether it is necessary to retry
+
+    Raises:
+        None
+    """
+    return isinstance(exception, OTSServiceError)
 
 class Sink(object):
     """Sink Class.
@@ -71,10 +86,10 @@ class Sink(object):
             None
         """
         primary_keys_name = sink_config['primaryKeysName']
-        rows_name = sink_config['colsName']
+        cols_name = sink_config['colsName']
         self.sink_config = sink_config
         self.sink_config['primaryKeysName'] = primary_keys_name.split(',')
-        self.sink_config['colsName'] = rows_name.split(',')
+        self.sink_config['colsName'] = [] if (cols_name.strip() == "") else cols_name.split(',')
 
         try:
             try:
@@ -93,10 +108,15 @@ class Sink(object):
                                         instance_name=self.sink_config['instanceName'],
                                         sts_token=security_token, socket_timeout=20)
             self.connected = True
+        except OTSServiceError as oe:
+            logger.error(oe)
+            logger.error(
+                "ERROR: OTSServiceError: Could not connect to Tablestore instance.")
+            raise oe
         except Exception as e:
             logger.error(e)
             logger.error(
-                "ERROR: Unexpected error: Could not connect to Tablestore instance.")
+                "ERROR: Unknown Error: Could not connect to Tablestore instance.")
             raise Exception(str(e))
         pass
 
@@ -132,7 +152,10 @@ class Sink(object):
          """
         return self.connected
 
-    @retry(stop_max_attempt_number=default_retry_times, wait_exponential_multiplier=1000, retry_on_result=result_need_retry)
+    @retry(stop_max_attempt_number=default_retry_times,
+           wait_exponential_multiplier=1000,
+           retry_on_result=result_need_retry,
+           retry_on_exception=retry_if_ots_exception)
     def deliver(self, payload):
         """Sink operator.
             deliver data to ots
@@ -154,6 +177,7 @@ class Sink(object):
             else:
                 data_list.append(payload['data'])
 
+            self._validate_data(data_list)
             put_row_items = self._get_row(data_list)
 
             # batch write data list into table
@@ -166,9 +190,40 @@ class Sink(object):
             for item in failed_items:
                 logger.error('Put item failed, error code: %s, error message: %s' % (item.error_code, item.error_message))
             return resp.is_all_succeed()
+        except OTSServiceError as oe:
+            logger.error(oe)
+            logger.error(
+                "ERROR: OTSServiceError: write data to tablestore instance: %s table: %s failed." % (self.sink_config['instanceName'], self.sink_config['tableName']))
+            raise oe
+        except ValueError as ve:
+            logger.error(ve)
+            logger.error(
+                "Data Validation Error: write data to tablestore instance: %s table: %s failed." % (
+                self.sink_config['instanceName'], self.sink_config['tableName']))
+            raise ve
         except Exception as e:
-            logger.error('deliver failed due to exception: ' + str(e))
-            return false
+            logger.error(e)
+            logger.error(
+                "ERROR: Unknown error: write data to tablestore instance: %s table: %s failed." % (self.sink_config['instanceName'], self.sink_config['tableName']))
+            raise e
+
+
+    def _validate_data(self, data_list):
+        """Inner method to validate data.
+
+        Args:
+            data_list: data list
+
+        Returns:
+            None
+        Raises:
+            Exception
+        """
+        primary_keys_name = self.sink_config['primaryKeysName']
+        for data in data_list:
+            for pk in primary_keys_name:
+                if pk not in data:
+                    raise ValueError("ERROR: Data Validation Error: validate data: %s failed due to lacking of primary key: %s" % (json.dumps(data), pk))
 
     def _get_row(self, data_list):
         """Inner method to get tablestore put row.
@@ -182,19 +237,25 @@ class Sink(object):
             None
         """
         put_row_items = []
+        primary_keys_name = self.sink_config['primaryKeysName']
+        cols_name = self.sink_config['colsName']
         for data in data_list:
             pks = []
-            cols = []
-            primary_keys_name = self.sink_config['primaryKeysName']
-            rows_name = self.sink_config['colsName']
+            rows = []
             for key in primary_keys_name:
                 logger.info("primary key: %s, value %s", key, data[key])
                 pks.append((key, data[key]))
-            for row in rows_name:
-                logger.info("row name: %s, value: %s", row, data[row])
-                cols.append((row, data[row]))
+            for col in cols_name:
+                logger.info("col name: %s, value: %s", col, data[col])
+                rows.append((col, data[col]))
 
-            row = Row(pks, cols)
+            if len(cols_name) == 0:
+                # append all data except those with primary keys
+                for k, v in data.items():
+                    if k not in primary_keys_name:
+                        rows.append((k, v))
+
+            row = Row(pks, rows)
             condition = Condition(RowExistenceExpectation.IGNORE)
             item = PutRowItem(row, condition)
             put_row_items.append(item)
@@ -261,35 +322,29 @@ def handler(event, context):
      Raises:
          Exception.
      """
-    try:
 
-        payload = json.loads(event)
+    payload = json.loads(event)
 
-        # only single data type is validated here.
-        if (sink.sink_config['batchOrNot'] == "False") and (sink.sink_config["eventSchema"] == "cloudEvent"):
-            logger.info("check single data with schema: cloudEvent")
-            if not sink_schema.validate_message_schema(payload):
+    # only single data type is validated here.
+    if (sink.sink_config['batchOrNot'] == "False") and (sink.sink_config["eventSchema"] == "cloudEvent"):
+        logger.info("check single data with schema: cloudEvent")
+        if not sink_schema.validate_message_schema(payload):
+            logger.error("validate failed error: %s",
+                         Schema(sink_schema.MESSAGE_SCHEMA, ignore_extra_keys=True).validate(payload))
+            raise Exception("MESSAGE_SCHEMA validate failed")
+
+    if (sink.sink_config['batchOrNot'] == "True") and (sink.sink_config["eventSchema"] == "cloudEvent"):
+        logger.info("check batch data with schema: cloudEvent")
+        for single_payload in payload:
+            if not sink_schema.validate_message_schema(single_payload):
                 logger.error("validate failed error: %s",
-                             Schema(sink_schema.MESSAGE_SCHEMA, ignore_extra_keys=True).validate(payload))
+                             Schema(sink_schema.MESSAGE_SCHEMA, ignore_extra_keys=True).validate(single_payload))
                 raise Exception("MESSAGE_SCHEMA validate failed")
 
-        if (sink.sink_config['batchOrNot'] == "True") and (sink.sink_config["eventSchema"] == "cloudEvent"):
-            logger.info("check batch data with schema: cloudEvent")
-            for single_payload in payload:
-                if not sink_schema.validate_message_schema(single_payload):
-                    logger.error("validate failed error: %s",
-                                 Schema(sink_schema.MESSAGE_SCHEMA, ignore_extra_keys=True).validate(single_payload))
-                    raise Exception("MESSAGE_SCHEMA validate failed")
+    if not sink.is_connected():
+        raise Exception("unconnected sink target")
 
-        if not sink.is_connected():
-            raise Exception("unconnected sink target")
-
-        is_succ = sink.deliver(payload)
-        if is_succ is False:
-            return json.dumps({"success": False, "error_message": "sink to ots failed."})
-
-    except Exception as e:
-        logger.error(e)
-        return json.dumps({"success": False, "error_message": str(e)})
-
-    return json.dumps({"success": True, "error_message": ""})
+    is_succ = sink.deliver(payload)
+    if is_succ is False:
+        raise Exception("Fail to write tablestore.")
+    return 'success'

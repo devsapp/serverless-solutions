@@ -36,8 +36,8 @@ def sink_api_handler(context, destination_config, payload):
             accessKeySecret=creds.access_key_secret,
             securityToken=creds.security_token or '')
 
-        response = client.invoke_function(destination_config["service_name"],
-                                          destination_config["function_name"], json.dumps(payload),
+        response = client.invoke_function(destination_config["serviceName"],
+                                          destination_config["functionName"], json.dumps(payload),
                                           headers={'x-fc-invocation-type': 'Async'})
         logger.info(response.data)
     except Exception as e:
