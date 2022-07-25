@@ -25,8 +25,8 @@ TRANSFORM_CONFIG_SCHEMA = {
 
 # DESTINATION_CONFIG_SCHEMA is used to validate destination config.
 DESTINATION_CONFIG_SCHEMA = {
-    'service_name': str,
-    'function_name': str,
+    'serviceName': str,
+    'functionName': str,
 }
 
 

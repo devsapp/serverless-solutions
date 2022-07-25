@@ -16,7 +16,7 @@ vars:
     #     - vsw-xxx
   transformEnv:
     TRANSFORM_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}"}'
-    DESTINATION_CONFIG: '{"service_name": "{{serviceName}}","function_name": "{{sinkFunctionName}}"}'
+    DESTINATION_CONFIG: '{"serviceName": "{{serviceName}}","functionName": "{{sinkFunctionName}}"}'
   sinkEnv:
     SINK_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}","host": "{{host}}","port": {{port}},"user": "{{user}}","password": "{{password}}","database": "{{database}}"}'
 

@@ -223,6 +223,8 @@ def handler(event, context):
 
 	except Exception as e:
 		logger.error(e)
-		return json.dumps({"success": False, "error_message": str(e), "failed_data": json.dumps(failed_data_list)})
+		raise e
+	if len(failed_data_list) != 0:
+		raise Exception(json.dumps({"success": False, "error_message": "not all data deliver succeeded", "failed_data": json.dumps(failed_data_list)}))
 
 	return json.dumps({"success": True, "error_message": "", "failed_data": json.dumps(failed_data_list)})

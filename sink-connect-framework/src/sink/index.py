@@ -119,7 +119,7 @@ class Sink(object):
         try:
             pass
         except Exception as e:
-            return False
+            raise e
 
         return True
 
@@ -200,6 +200,6 @@ def handler(event, context):
 
     except Exception as e:
         logger.error(e)
-        return json.dumps({"success": False, "error_message": str(e)})
+        raise e
 
     return json.dumps({"success": True, "error_message": ""})
