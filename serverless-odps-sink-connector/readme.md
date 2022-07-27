@@ -100,7 +100,7 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
   * odpsProject: ODPS(MaxCompute) 项目名称，需要字母开头，只能包含字母、下划线和数字。
   * odpsEndpoint: ODPS(MaxCompute) 服务地址，如无特殊需求可选择外网访问地址，地址详见：https://help.aliyun.com/document_detail/34951.html。
   * odpsTableName: ODPS(MaxCompute) 数据表名称。
-  * odpsTableColumnsOrder: 按顺序输入 ODPS(MaxCompute) 数据表列名，多个列名之间使用 "," 分隔，例上文资源准备创建的数据表可填写: id,name,age。
+  * odpsTableColumns: 按顺序输入 ODPS(MaxCompute) 数据表列名，多个列名之间使用 "," 分隔，例上文资源准备创建的数据表可填写: id,name,age。(注：column 需按照 odps 定义的顺序输入。)
 
 ### 应用调用
 **调用参数**

@@ -136,7 +136,7 @@ class Sink(object):
         return True
 
     def format_records(self, block_records):
-        columns_order = self.sink_config['odpsTableColumnsOrder'].split(',')
+        columns_order = self.sink_config['odpsTableColumns'].split(',')
         record = []
         for r in block_records:
             tmp_r = []

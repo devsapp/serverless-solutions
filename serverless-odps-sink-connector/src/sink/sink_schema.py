@@ -27,7 +27,7 @@ SINK_CONFIG_SCHEMA = {
     'odpsProject': str,
     'odpsEndpoint': str,
     'odpsTableName': str,
-    'odpsTableColumnsOrder': str
+    'odpsTableColumns': str
 }
 
 

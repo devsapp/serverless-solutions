@@ -13,7 +13,7 @@ vars:
     TRANSFORM_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}"}'
     DESTINATION_CONFIG: '{"service_name": "{{serviceName}}","function_name": "{{sinkFunctionName}}"}'
   sinkEnv:
-    SINK_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}","accessKeyID": "{{accessKeyID}}","accessKeySecret": "{{accessKeySecret}}","odpsProject": "{{odpsProject}}","odpsEndpoint": "{{odpsEndpoint}}","odpsTableName": "{{odpsTableName}}","odpsTableColumnsOrder": "{{odpsTableColumnsOrder}}"}'
+    SINK_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}","accessKeyID": "{{accessKeyID}}","accessKeySecret": "{{accessKeySecret}}","odpsProject": "{{odpsProject}}","odpsEndpoint": "{{odpsEndpoint}}","odpsTableName": "{{odpsTableName}}","odpsTableColumns": "{{odpsTableColumns}}"}'
 
 
 services:
