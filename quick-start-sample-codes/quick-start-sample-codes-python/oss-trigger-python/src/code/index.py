@@ -44,7 +44,7 @@ def handler(event, context):
     # Get oss bucket name
     bucket_name = oss_info_map['bucket']['name']
     # Set oss service endpoint
-    endpoint = 'oss-' +  oss_raw_data['events'][0]['region'] + '.aliyuncs.com'
+    endpoint = 'oss-' +  oss_raw_data['events'][0]['region'] + '-internal.aliyuncs.com'
     # Initiate oss client
     bucket = oss2.Bucket(auth, endpoint, bucket_name)
     object_name = oss_info_map['object']['key']
