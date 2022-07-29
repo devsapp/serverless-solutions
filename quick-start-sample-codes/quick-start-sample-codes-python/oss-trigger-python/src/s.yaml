@@ -27,6 +27,7 @@ vars: # 全局变量
   service:
     name: "{{ serviceName }}"
     description: 'oss trigger by serverless devs'
+    role: "acs:ram::{{ accountId }}:role/AliyunFCDefaultRole"
   bucketName: "{{ bucketName }}"
 
 services:

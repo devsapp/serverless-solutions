@@ -13,6 +13,7 @@ Service:
   函数计算:
     Authorities:
       - AliyunFCFullAccess
+      - AliyunOSSFullAccess
     Runtime: Python3
 Parameters:
   type: object

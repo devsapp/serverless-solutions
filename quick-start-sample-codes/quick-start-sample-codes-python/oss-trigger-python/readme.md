@@ -18,14 +18,16 @@
 
 </description>
 
-<table>
-
 ## 前期准备
 使用该项目，推荐您拥有以下的产品权限 / 策略：
 
 | 服务/业务 | 函数计算 |     
 | --- |  --- |   
-| 权限/策略 | AliyunFCFullAccess |  
+| 权限/策略 | AliyunFCFullAccess <br>AliyunOSSFullAccess |
+
+| 服务/业务 | 访问控制(RAM) |     
+| --- |  --- |   
+| 资源/创建 | 确保 AliyunFCDefaultRole 存在，该权限内容可以参考[这里](https://help.aliyun.com/document_detail/181589.html) |
 
 使用该项目，您需要准备好以下资源：
 
@@ -33,8 +35,6 @@
 | --- |  --- |   
 | 资源/创建 | OSS Bucket |  
 | 资源/上传 | 图片文件 (JPG, PNG) 上传至 OSS Bucket |
-
-</table>
 
 <codepre id="codepre">
 
