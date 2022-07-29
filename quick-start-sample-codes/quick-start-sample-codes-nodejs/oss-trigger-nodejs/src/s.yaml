@@ -27,6 +27,7 @@ vars: # 全局变量
   service:
     name: "{{ serviceName }}"
     description: 'oss trigger by serverless devs'
+    role: "acs:ram::{{ accountId }}:role/AliyunFCDefaultRole"
   bucketName: "{{ bucketName }}"
 
 services:
@@ -47,9 +48,6 @@ services:
         handler: index.handler
         memorySize: 128
         timeout: 60
-        environmentVariables:
-          region: ${vars.region}
-          bucketName: ${vars.bucketName}
       triggers:
         - name: oss-trigger-test
           sourceArn: acs:oss:${vars.region}:${vars.accountId}:${vars.bucketName}

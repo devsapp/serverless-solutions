@@ -18,7 +18,6 @@
 
 </description>
 
-<table>
 
 ## 前期准备
 使用该项目，推荐您拥有以下的产品权限 / 策略：
@@ -34,7 +33,9 @@
 | 资源/创建 | OSS Bucket                      |  
 | 资源/上传 | 图片文件 (JPEG, PNG) 上传至 OSS Bucket |
 
-</table>
+| 服务/业务 | 访问控制(RAM) |     
+| --- |  --- |   
+| 资源/创建 | 确保 AliyunFCDefaultRole 存在，该权限内容可以参考[这里](https://help.aliyun.com/document_detail/181589.html) |  
 
 <codepre id="codepre">
 

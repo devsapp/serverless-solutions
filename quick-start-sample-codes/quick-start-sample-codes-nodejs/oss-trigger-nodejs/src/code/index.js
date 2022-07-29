@@ -44,12 +44,15 @@ exports.handler = async function (event, context, callback) {
     console.log("The client entity is: \n");
     console.dir(events);
 
+    // 从OSS中获取文件buffer
     let objectBuffer = await getBuffer(client, objectName);
+    // 将文件buffer进行备份到OSS中
     await putBuffer(client, objectBuffer, 'copy-' + objectName)
 
     callback(null, "done");
 }
 
+// 从OSS中下载文件
 async function putBuffer(client, objectBuffer, objectName) {
     try {
         console.log("上传文件备份:" + objectName);
@@ -60,6 +63,7 @@ async function putBuffer(client, objectBuffer, objectName) {
     }
 }
 
+// 上传文件到OSS中
 async function getBuffer(client, objectName) {
     try {
         console.log("下载:" + objectName);
