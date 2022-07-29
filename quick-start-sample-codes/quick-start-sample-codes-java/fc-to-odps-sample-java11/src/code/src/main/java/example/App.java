@@ -11,14 +11,14 @@ import com.aliyun.odps.account.AliyunAccount;
 import com.aliyun.odps.task.SQLTask;
 
 /**
- 本代码样例主要实现以下功能:
- * 从 event 中解析事件列表。
- * 将解析的数据插入到 ODPS 数据表中。
-
- This sample code is mainly doing the following things:
- * Parse the event list from event param.
- * Insert payload into the ODPS table.
- */
+* 本代码样例主要实现以下功能:
+* 1. 从 event 中解析事件列表。
+* 2. 将解析的数据插入到 ODPS 数据表中。
+*
+* This sample code is mainly doing the following things:
+* 1. Parse the event list from event param.
+* 2. Insert payload into the ODPS table.
+*/
 
 public class App implements StreamRequestHandler {
     @Override
