@@ -90,8 +90,8 @@
 * 控制台调用：
     * 登录[函数计算控制台](https://fcnext.console.aliyun.com/cn-hangzhou/services) ，找到部署的函数。
     * 点击**测试函数**->**配置测试参数**，将上文的调用参数粘贴到下图所示位置中。
-      ![image](http://git.cn-hangzhou.oss-cdn.aliyun-inc.com/uploads/serverless/serverless-solutions/b3f16886253f68b5893c4a353ffcb6f6/image.png)
-      ![image](http://git.cn-hangzhou.oss-cdn.aliyun-inc.com/uploads/serverless/serverless-solutions/c6776a5a7bbd3d955e4612a0b7f59c79/image.png)
+    ![image](http://git.cn-hangzhou.oss-cdn.aliyun-inc.com/uploads/serverless/serverless-solutions/b1328a1411ea706bcb596a9e05193d62/image.png)
+    ![image](http://git.cn-hangzhou.oss-cdn.aliyun-inc.com/uploads/serverless/serverless-solutions/7371e9d5a5434dff730d95cecb40923f/image.png)
     * 完成后点击测试函数，则此条数据即通过函数插入到 ODPS 对应表中。
 
 * s 工具调用：
