@@ -5,3 +5,5 @@ venv
 
 ./site-packages
 vendor/
+
+node_modules
