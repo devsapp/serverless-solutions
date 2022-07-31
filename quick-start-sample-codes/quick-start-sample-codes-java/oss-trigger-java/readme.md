@@ -146,6 +146,7 @@
         "size": 122539
      },
   }
+   "region": "${regionName}",
   ```
   - 使用测试样例进行触发测试，运行 `s cli fc invoke --service-name ${serviceNamme} --function-name ${functionName} --event-file event-template/oss-event.json --region ${regionName}`
   - 执行成功后您可以查询 OSS bucket，备份图片会被放入 copy 文件夹中。
