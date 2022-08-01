@@ -94,7 +94,7 @@ Parameters:
       description: 输入账户的 accessKey ID，用于访问 ODPS(MaxCompute)。
     accessKeySecret:
       title: 账户的 accessKeySecret
-      type: string
+      type: password
       description: 输入账户的 accessKey Secret，用于访问 ODPS(MaxCompute)。
     odpsProject:
       title: ODPS 项目
