@@ -1,0 +1,12 @@
+[
+    {
+        "name":"xiaoMing",
+        "age":"23",
+        "gender":"male"
+    },
+    {
+        "name":"xiaoHong",
+        "age":"22",
+        "gender":"female"
+    }
+]
