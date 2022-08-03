@@ -5,11 +5,16 @@ import os
 import oss2
 import time
 import sink_schema
+import random
+import string
 
 from retrying import retry
 from oss2 import exceptions
 from schema import Schema
 from compress_pkg.zip import compress_file_with_zip
+from compress_pkg.gzip import compress_file_with_gzip
+from compress_pkg.snappy import compress_file_with_snappy
+from compress_pkg.hadoop_snappy import compress_file_with_hadoop_snappy
 
 logger = logging.getLogger()
 default_retry_times = 3
@@ -128,7 +133,10 @@ class Sink(object):
             todo: xx
         """
         logger.info('exec deliver')
-        filename = sink.sink_config["objectPathPrefix"] + "_" + str(int(time.time()))
+
+        filename = "{0}_{1}_{2}".format(sink.sink_config["objectPathPrefix"], str(int(time.time())),
+            ''.join(random.sample(string.ascii_letters + string.digits, 8)))
+        logger.info("file name is: %s", filename)
         data = json.dumps(payload)
         return self.compress(filename, data)
 
@@ -143,11 +151,14 @@ class Sink(object):
                 res = compress_file_with_zip(self.client, filename, data)
                 return self.process_response(res)
             elif compressType == "GZIP":
-                pass
+                res = compress_file_with_gzip(self.client, filename, data)
+                return self.process_response(res)
             elif compressType == "Snappy":
-                pass
-            elif compressType == "Hadoop-Compatible Snappy":
-                pass
+                res = compress_file_with_snappy(self.client, filename, data)
+                return self.process_response(res)
+            elif compressType == "Hadoop Snappy":
+                res = compress_file_with_hadoop_snappy(self.client, filename, data)
+                return self.process_response(res)
         except Exception as e:
             logger.error("upload oss failed", e)
             return False

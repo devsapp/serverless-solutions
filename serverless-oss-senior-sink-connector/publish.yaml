@@ -53,16 +53,16 @@ Parameters:
     objectPathPrefix:
       title: OSS object 前缀名称
       type: string
-      description: OSS object 前缀名称, 最终命名为 objectPathPrefix_{timestamp}。
+      description: OSS object 前缀名称, 最终命名为 objectPathPrefix_{timestamp}_{8位随机字符串}。
     compressType:
       title: 数据压缩类型
       type: string
-      default: 'None'
+      default: 'Disabled'
       enum:
-        - "None"
+        - "Disabled"
         - "GZIP"
         - "ZIP"
         - "Snappy"
-        - "Hadoop-Compatible Snappy"
-      description: 可以选择指定压缩算法，将数据压缩后上传到 OSS。(默认值为 'None'，即不压缩。)
+        - "Hadoop Snappy"
+      description: 可以选择指定压缩算法，将数据压缩后上传到 OSS。(默认值为 'Disabled'，即不压缩。)
 
