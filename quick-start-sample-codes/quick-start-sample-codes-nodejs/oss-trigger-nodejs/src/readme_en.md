@@ -1,22 +1,23 @@
-# oss-trigger-fc-http-php help documentation
+# oss-trigger-fc-event-nodejs14 help documentation
 
 <p align="center" class="flex justify-center">
     <a href="https://www.serverless-devs.com" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=oss-trigger-fc-http-php&type=packageType">
+    <img src="http://editor.devsapp.cn/icon?package=oss-trigger-fc-event-nodejs14&type=packageType">
   </a>
-  <a href="http://www.devsapp.cn/details.html?name=oss-trigger-fc-http-php" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=oss-trigger-fc-http-php&type=packageVersion">
+  <a href="http://www.devsapp.cn/details.html?name=oss-trigger-fc-event-nodejs14" class="ml-1">
+    <img src="http://editor.devsapp.cn/icon?package=oss-trigger-fc-event-nodejs14&type=packageVersion">
   </a>
-  <a href="http://www.devsapp.cn/details.html?name=oss-trigger-fc-http-php" class="ml-1">
-    <img src="http://editor.devsapp.cn/icon?package=oss-trigger-fc-http-php&type=packageDownload">
+  <a href="http://www.devsapp.cn/details.html?name=oss-trigger-fc-event-nodejs14" class="ml-1">
+    <img src="http://editor.devsapp.cn/icon?package=oss-trigger-fc-event-nodejs14&type=packageDownload">
   </a>
 </p>
 
 <description>
 
-Quickly deploy a php http type oss trigger function to Alibaba Cloud Function Computing, this function will backup http request to object to copy directory
+Quickly deploy a Node.js 14 Event-type OSS trigger function to Alibaba Cloud Function Compute
 
 </description>
+
 
 ## Preliminary preparation 
 To use this program, it is recommended that you have the following product permissions/policies prepared:
@@ -32,9 +33,9 @@ To use this project, please prepare the following resources:
 | Resource/Create  | OSS Bucket                                  |
 | Resource/Upload  | Upload image file (JPEG, PNG) to OSS Bucket |
 
-| Service/Business | Access control(RAM) |
-| -- |  --- |
-| Resource/Create | Ensure AliyunFCDefaultRole exist，The content of this permission can refer to[here](https://help.aliyun.com/document_detail/181589.html) |
+| Service/Business | Access control(RAM)                                                                                                                      |
+| --- |------------------------------------------------------------------------------------------------------------------------------------------|
+| Resource/Creat | Ensure AliyunFCDefaultRole exist，The content of this permission can refer to[there](https://help.aliyun.com/document_detail/181589.html) |
 
 
 <codepre id="codepre">
@@ -78,40 +79,82 @@ To use this project, please prepare the following resources:
 
 <appcenter>
 
--  :fire:  By [Serverless application center](https://fcnext.console.aliyun.com/applications/create?template=oss-trigger-fc-http-php) ，
-   [![Deploy with Severless Devs](https://img.alicdn.com/imgextra/i1/O1CN01w5RFbX1v45s8TIXPz_!!6000000006118-55-tps-95-28.svg)](https://fcnext.console.aliyun.com/applications/create?template=oss-trigger-fc-http-php)  this application.
+-  :fire:  By [Serverless Application Center](https://fcnext.console.aliyun.com/applications/create?template=oss-trigger-fc-event-nodejs14) ，
+   [![Deploy with Severless Devs](https://img.alicdn.com/imgextra/i1/O1CN01w5RFbX1v45s8TIXPz_!!6000000006118-55-tps-95-28.svg)](https://fcnext.console.aliyun.com/applications/create?template=oss-trigger-fc-event-nodejs14)  this application.
 
 </appcenter>
 
--  Deploy by [Serverless Devs Cli](https://www.serverless-devs.com/serverless-devs/install) ：
+- Deploy by [Serverless Devs Cli](https://www.serverless-devs.com/serverless-devs/install) ：
   - [Install Serverless Devs Cli ](https://www.serverless-devs.com/serverless-devs/install) ，and[Authorization information configuration](https://www.serverless-devs.com/fc/config) ；
-  - Initialize the project： `s init oss-trigger-fc-event-nodejs14 -d oss-trigger-fc-event-nodejs14`
+  - Initialize the project：`s init oss-trigger-fc-event-nodejs14 -d oss-trigger-fc-event-nodejs14`
   - Fill in the parameters described in the above modules
   - Enter the project and deploy the project：`cd oss-trigger-fc-event-nodejs14 && s deploy -y`
 
-- Code testing
-  #### Construct http request through postman
-    - Go to the Function Compute console to find the deployed function and copy its public network access address
-      ![](https://img.alicdn.com/imgextra/i1/O1CN01R7fWRr1xDN9b6e0fa_!!6000000006409-0-tps-2047-607.jpg)
-    - Construct a request in postman, paste the public network access address, and the request body must contain the following content
+- Test the code
+  - Run `s cli fc-event oss` and generate OSS Trigger's Sample payload/event
+  - An example of the generated Event is that the Event is a simulation of a real OSS triggering an incoming Event.
     ```bash
     {
-    "endpoint": "xxx",  // The endpoint of the target OSS
-    "bucket": "xxx", //bucket name
-    "object": "exampledir/examplefile.jpeg" // full path to the file to be manipulated
+      "events": [
+        {
+          "eventName": "ObjectCreated:PutObject",
+          "eventSource": "acs:oss",
+          "eventTime": "2017-04-21T12:46:37.000Z",
+          "eventVersion": "1.0",
+          "oss": {
+            "bucket": {
+              "arn": "acs:oss:cn-shanghai:123456789:bucketname",
+              "name": "testbucket",
+              "ownerIdentity": "123456789",
+              "virtualBucket": ""
+            },
+            "object": {
+              "deltaSize": 122539,
+              "eTag": "688A7BF4F233DC9C88A80BF985AB7329",
+              "key": "image/a.jpg",
+              "size": 122539
+            },
+            "ossSchemaVersion": "1.0",
+            "ruleId": "9adac8e253828f4f7c0466d941fa3db81161****"
+          },
+          "region": "cn-shanghai",
+          "requestParameters": {
+            "sourceIPAddress": "140.205.***.***"
+          },
+          "responseElements": {
+            "requestId": "58F9FF2D3DF792092E12044C"
+          },
+          "userIdentity": {
+            "principalId": "123456789"
+          }
+        }
+      ]
     }
+    ```
+  - You need to replace the oss resource part in the above example. The regionName, accountId, and bucketName need to be replaced with your own bucket information. Please replace fileName with the image name you uploaded earlier.
+  ```bash
+  "oss": {
+      "bucket": {
+        "arn": "acs:oss:${regionName}:${accountId}:${bucketName}",
+        "name": "${bucketName}",
+        "ownerIdentity": "${accountId}",
+        "virtualBucket": ""
+      },
+     "object": {
+        "deltaSize": 122539,
+        "eTag": "688A7BF4F233DC9C88A80BF985AB7329",
+        "key": "${fileName}",
+        "size": 122539
+     },
+  }
+   "region": "${regionName}",
   ```
-  - Send request via GET
-  ![](https://img.alicdn.com/imgextra/i2/O1CN01yVwHJr26EaksATfmO_!!6000000007630-0-tps-1706-776.jpg)
-  - View the postman request result, and at the same time, you can view the target OSS. The object has been backed up to the copy directory.
-
-  
-    
+  - Trigger tests with test samples,run `s cli fc invoke --service-name ${serviceNamme} --function-name ${functionName} --event-file event-template/oss-event.json --region ${regionName}`
+  - After successful execution, you can query the OSS bucket, and the backup images will be placed in the copy folder.
 
 </deploy>
 
 <appdetail id="flushContent">
-
 
 # Application details
 

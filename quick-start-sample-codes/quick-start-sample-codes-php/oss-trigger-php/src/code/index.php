@@ -17,9 +17,11 @@ use OSS\Core\OssException;
 function handler($request, $context): Response
 {
     // 获取requestBody并将其解析为json
+    // Get requestBody and parse it as json
     $requestBody = $request->getBody()->getContents();
     $jObj = json_decode($requestBody);
     // 从context中获取credentials
+    // Get credentials from context
     $credentials = $context['credentials'];
     $accessKeyId = $credentials['accessKeyId'];
     $accessKeySecret = $credentials['accessKeySecret'];
@@ -31,10 +33,13 @@ function handler($request, $context): Response
 
     try {
         // 连接OSS
+        // Connect to OSS
         $ossClient = new OssClient($accessKeyId, $accessKeySecret, $endpoint, false, $securityToken);
         // 获取文件内容
+        // Get the file content
         $content = $ossClient->getObject($bucket, $object);
         // 上传文件到copy目录下实现文件备份
+        // Upload files to the copy directory to achieve file backup
         $ossClient->putObject($bucket, "copy/" . $object, $content);
     } catch (OssException $e) {
         print_r(__FUNCTION__ . ": FAILED\n");
