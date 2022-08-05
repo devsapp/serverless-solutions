@@ -57,12 +57,12 @@ Parameters:
     compressType:
       title: 数据压缩类型
       type: string
-      default: 'Disabled'
+      default: 'None'
       enum:
-        - "Disabled"
+        - "None"
         - "GZIP"
         - "ZIP"
         - "Snappy"
         - "Hadoop Snappy"
-      description: 可以选择指定压缩算法，将数据压缩后上传到 OSS。(默认值为 'Disabled'，即不压缩。)
+      description: 可以选择指定压缩算法，将数据压缩后上传到 OSS。(默认值为 'None'，即不压缩。)
 

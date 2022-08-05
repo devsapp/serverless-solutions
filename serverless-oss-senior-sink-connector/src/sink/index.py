@@ -159,6 +159,8 @@ class Sink(object):
             elif compressType == "Hadoop Snappy":
                 res = compress_file_with_hadoop_snappy(self.client, filename, data)
                 return self.process_response(res)
+            else:
+                raise Exception("compressType is invalid")
         except Exception as e:
             logger.error("upload oss failed", e)
             return False

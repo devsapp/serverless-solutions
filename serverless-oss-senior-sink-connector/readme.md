@@ -65,7 +65,7 @@
   * endpoint: OSS 访问域名, 请根据自身需求选择相应类型的 endpoint，通常可选择外网 Endpoint，详情可参考：https://help.aliyun.com/document_detail/31837.html。
   * bucket: 目标 OSS bucket 名称。
   * objectPathPrefix: OSS object 前缀名称, 最终命名为 objectPathPrefix_{timestamp}_{8位随机字符串}。
-  * compressType: 可以选择指定压缩算法(zip/gzip/snappy等)，将数据压缩后上传到 OSS。(默认值为 'Disabled'，即不压缩。)
+  * compressType: 可以选择指定压缩算法(zip/gzip/snappy等)，将数据压缩后上传到 OSS。(默认值为 'None'，即不压缩。)
 
 ### 应用调用
 
