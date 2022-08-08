@@ -14,7 +14,7 @@
 
 <description>
 
-Quickly deploy a Java 11 Event-type OSS trigger function to Alibaba Cloud Function Compute
+Quickly deploy a Golang Event-type OSS trigger function to Alibaba Cloud Function Compute
 
 </description>
 
