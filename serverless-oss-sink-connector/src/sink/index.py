@@ -229,6 +229,8 @@ def handler(event, context):
             raise Exception("unconnected sink target")
 
         success = sink.deliver(payload)
+        if not success:
+            raise Exception("Fail to write to oss")
 
     except Exception as e:
         logger.error(e)
