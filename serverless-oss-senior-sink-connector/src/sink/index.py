@@ -134,30 +134,31 @@ class Sink(object):
         """
         logger.info('exec deliver')
 
-        filename = "{0}_{1}_{2}".format(sink.sink_config["objectPathPrefix"], str(int(time.time())),
+        filename = "{0}_{1}_{2}".format(sink.sink_config["objectPrefixName"], str(int(time.time())),
             ''.join(random.sample(string.ascii_letters + string.digits, 8)))
-        logger.info("file name is: %s", filename)
+        path = sink.sink_config["objectPath"].lstrip('/')
+        logger.info("file path is: %s, file name is: %s", path, filename)
         data = json.dumps(payload)
-        return self.compress(filename, data)
+        return self.compress(path, filename, data)
 
 
-    def compress(self, filename, data):
+    def compress(self, path, filename, data):
         try:
             compressType = sink.sink_config['compressType']
             if compressType == 'None':
-                res = self.client.put_object(filename, data)
+                res = self.client.put_object(path+filename, data)
                 return self.process_response(res)
             elif compressType == "ZIP":
-                res = compress_file_with_zip(self.client, filename, data)
+                res = compress_file_with_zip(self.client, path, filename, data)
                 return self.process_response(res)
             elif compressType == "GZIP":
-                res = compress_file_with_gzip(self.client, filename, data)
+                res = compress_file_with_gzip(self.client, path, filename, data)
                 return self.process_response(res)
             elif compressType == "Snappy":
-                res = compress_file_with_snappy(self.client, filename, data)
+                res = compress_file_with_snappy(self.client, path, filename, data)
                 return self.process_response(res)
             elif compressType == "Hadoop Snappy":
-                res = compress_file_with_hadoop_snappy(self.client, filename, data)
+                res = compress_file_with_hadoop_snappy(self.client, path, filename, data)
                 return self.process_response(res)
             else:
                 raise Exception("compressType is invalid")

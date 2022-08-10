@@ -5,12 +5,12 @@ import logging
 
 logger = logging.getLogger()
 
-def compress_file_with_snappy(client, file_name, data):
+def compress_file_with_snappy(client, path, file_name, data):
     try:
         os.chdir('/tmp')
         # init file param
         local_snappy_file = file_name + ".snappy"
-        remote_snappy_file= local_snappy_file
+        remote_snappy_file= path + local_snappy_file
 
         # create a local file and append data
         f = open(file_name, "w+")

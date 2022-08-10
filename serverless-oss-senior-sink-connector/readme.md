@@ -61,10 +61,13 @@
 
 <appdetail id="flushContent">
 
+### 应用参数
+
 无论通过上面哪种方式部署，都需要为应用配置参数，具体如下：
   * endpoint: OSS 访问域名, 请根据自身需求选择相应类型的 endpoint，通常可选择外网 Endpoint，详情可参考：https://help.aliyun.com/document_detail/31837.html。
   * bucket: 目标 OSS bucket 名称。
-  * objectPathPrefix: OSS object 前缀名称, 最终命名为 objectPathPrefix_{timestamp}_{8位随机字符串}。
+  * objectPath: OSS object 路径, 格式为 `'/path/'`，如果 object 直接存放在 bucket 一级目录下，仅需填写 `'/'`，例：(1)/a/b/c/ (2)/a/ (3) /。
+  * objectPrefixName: OSS object 前缀名称, 最终命名为 `PREFIX_${TIMESTAMP}_${RANDOM}`，其中 TIMESTAMP 精确到秒，RANDOM 为 8 位随机字符串。
   * compressType: 可以选择指定压缩算法(zip/gzip/snappy等)，将数据压缩后上传到 OSS。(默认值为 'None'，即不压缩。)
 
 ### 应用调用
