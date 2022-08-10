@@ -10,7 +10,7 @@ vars:
     role:
     logConfig: auto
   sinkEnv:
-    SINK_CONFIG: '{"endpoint": "{{endpoint}}", "bucket": "{{bucket}}", "objectPathPrefix": "{{objectPathPrefix}}", "compressType": "{{compressType}}"}'
+    SINK_CONFIG: '{"endpoint": "{{endpoint}}", "bucket": "{{bucket}}", "objectPath": "{{objectPath}}", "objectNamePrefix": "{{objectNamePrefix}}", "compressType": "{{compressType}}"}'
 
 
 services:

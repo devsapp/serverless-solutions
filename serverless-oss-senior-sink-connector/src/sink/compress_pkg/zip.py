@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 import zipfile
 import os
+import logging
 
-def compress_file_with_zip(client, file_name, data):
+logger = logging.getLogger()
+
+def compress_file_with_zip(client, path, file_name, data):
     try:
         os.chdir('/tmp')
         # init file param
         local_zip_file = file_name + ".zip"
-        remote_zip_file= local_zip_file
+        remote_zip_file= path + local_zip_file
 
         # create a local file and append data
         f = open(file_name, "w+")
@@ -22,5 +25,6 @@ def compress_file_with_zip(client, file_name, data):
         # upload local zip file to oss
         return client.put_object_from_file(remote_zip_file, local_zip_file)
     except Exception as e:
+        logger.info(e)
         raise e
 

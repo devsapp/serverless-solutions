@@ -2,7 +2,7 @@ Type: Application
 Name: OSSSeniorSinkConnector
 Provider:
   - 阿里云
-Version: dev
+Version: 0.1.1
 Description: 函数计算(FC) -> 对象存储(OSS) sink connector
 HomePage: https://github.com/devsapp/serverless-io-sink
 Tags:
@@ -50,10 +50,15 @@ Parameters:
       title: OSS bucket 名称
       type: string
       description: 目标 OSS bucket 名称
-    objectPathPrefix:
+    objectPath:
+      title: OSS object 路径
+      type: string
+      default: '/'
+      description: OSS object 路径, 格式为 '/path/'，如果 object 直接存放在 bucket 一级目录下，仅需填写 '/'，例：(1)/a/b/c/ (2)/a/ (3) /。
+    objectNamePrefix:
       title: OSS object 前缀名称
       type: string
-      description: OSS object 前缀名称, 最终命名为 objectPathPrefix_{timestamp}_{8位随机字符串}。
+      description: OSS object 前缀名称, 最终命名为 PREFIX_${TIMESTAMP}_${RANDOM}，其中 TIMESTAMP 精确到毫秒，RANDOM 为 8 位随机字符串。
     compressType:
       title: 数据压缩类型
       type: string

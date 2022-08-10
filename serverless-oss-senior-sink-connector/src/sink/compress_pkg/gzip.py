@@ -5,12 +5,12 @@ import logging
 
 logger = logging.getLogger()
 
-def compress_file_with_gzip(client, file_name, data):
+def compress_file_with_gzip(client, path, file_name, data):
     try:
         os.chdir('/tmp')
         # init file param
         local_gzip_file = file_name + ".gz"
-        remote_gzip_file= local_gzip_file
+        remote_gzip_file= path + local_gzip_file
 
         # gzip local file
         gzf = gzip.GzipFile(filename="", mode='wb', compresslevel=9, fileobj=open(local_gzip_file, 'wb'))

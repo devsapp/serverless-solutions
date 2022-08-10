@@ -7,7 +7,8 @@ from schema import Schema
 SINK_CONFIG_SCHEMA = {
     'endpoint': str,
     'bucket': str,
-    'objectPathPrefix': str,
+    'objectPath': str,
+    'objectNamePrefix': str,
     'compressType': str
 }
 
