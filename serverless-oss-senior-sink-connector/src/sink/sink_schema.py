@@ -8,7 +8,7 @@ SINK_CONFIG_SCHEMA = {
     'endpoint': str,
     'bucket': str,
     'objectPath': str,
-    'objectPrefixName': str,
+    'objectNamePrefix': str,
     'compressType': str
 }
 

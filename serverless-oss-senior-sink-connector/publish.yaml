@@ -55,10 +55,10 @@ Parameters:
       type: string
       default: '/'
       description: OSS object 路径, 格式为 '/path/'，如果 object 直接存放在 bucket 一级目录下，仅需填写 '/'，例：(1)/a/b/c/ (2)/a/ (3) /。
-    objectPrefixName:
+    objectNamePrefix:
       title: OSS object 前缀名称
       type: string
-      description: OSS object 前缀名称, 最终命名为 PREFIX_${TIMESTAMP}_${RANDOM}，其中 TIMESTAMP 精确到秒，RANDOM 为 8 位随机字符串。
+      description: OSS object 前缀名称, 最终命名为 PREFIX_${TIMESTAMP}_${RANDOM}，其中 TIMESTAMP 精确到毫秒，RANDOM 为 8 位随机字符串。
     compressType:
       title: 数据压缩类型
       type: string

@@ -134,7 +134,7 @@ class Sink(object):
         """
         logger.info('exec deliver')
 
-        filename = "{0}_{1}_{2}".format(sink.sink_config["objectPrefixName"], str(int(time.time())),
+        filename = "{0}_{1}_{2}".format(sink.sink_config["objectNamePrefix"], str(int(time.time()*1000)),
             ''.join(random.sample(string.ascii_letters + string.digits, 8)))
         path = sink.sink_config["objectPath"].lstrip('/')
         logger.info("file path is: %s, file name is: %s", path, filename)
