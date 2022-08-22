@@ -24,22 +24,11 @@ def handler_message(event, context):
         # 模版代码目前只针对key为'data'的内容进行分割，也可以针对其它key进行分割处理
         transform_key = 'data'
         transform_body = message[transform_key]
-        transform_body_array = []
-        if len(transform_body) > 0:
-            transform_body_array = transform(transform_body)
-
-        for transform_body in transform_body_array:
-            if len(transform_body) == 0:
-                continue
-            transform_message = copy.deepcopy(message)
-            transform_message[transform_key] = transform_body
-            transform_messages.append(transform_message)
-        if len(transform_messages) == 0:
-            transform_messages.append(message)
+        result = dynamic_routing(transform_body)
     except Exception as e:
         logger.error(e)
         return json.dumps({"success": False, "error_message": str(e)})
-    return transform_messages
+    return json.dumps({"success": True, "error_message": str(result)})
 
 # 示例对象结构部分内容如下：
 # {
@@ -48,19 +37,17 @@ def handler_message(event, context):
 # 针对分割场景这里假定data是一个字符串类型的对象
 
 
-def transform(data):
+def dynamic_routing(data):
     split_dataset = []
     # 定义数据分隔符
     delimiter = '|'
-
-    # 对data部分数据进行字符串格式化
-    # data = str(data)
-    # logger.info("data str: '%s'" % (data))
 
     # 对data部分数据按照分隔符进行分割，注意分隔后的内容会进行strip操作
     split_parts = data.split(delimiter)
     for part in split_parts:
         if len(part) == 0 or len(part.strip()) == 0:
             continue
-        split_dataset.append(part.strip())
-    return split_dataset
+        # dynamic routing the data to different topic
+        logger.info(
+            "dynamic routing the message {%s} to topic: {%s}" % (part, "xxx"))
+    return ""

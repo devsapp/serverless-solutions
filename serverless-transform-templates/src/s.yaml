@@ -10,7 +10,7 @@ vars:
     role:
     logConfig: auto
 services:
-  transform_filter: #  服务名称。
+  filtering: #  服务名称。
     component: devsapp/fc  # 组件名称。
     actions:
       pre-deploy: # 在deploy之前运行
@@ -20,9 +20,49 @@ services:
       region: "{{region}}"
       service: ${vars.service}
       function:
-        name: "transform_filter"
+        name: "filtering"
         description: 'this is serverless transform function for filtering'
-        codeUri: './transform_filter'
+        codeUri: './filtering'
+        handler: 'index.handler_message'
+        memorySize: 128
+        runtime: python3.9
+        timeout: 60
+        asyncConfiguration:
+          maxAsyncRetryAttempts: 0
+          statefulInvocation: true
+  transform_enrichment: #  服务名称。
+    component: devsapp/fc  # 组件名称。
+    actions:
+      pre-deploy: # 在deploy之前运行
+        - run: s build --use-docker      # 要执行的系统命令，类似于一种钩子的形式
+          path: ./
+    props: #  组件的属性值。
+      region: "{{region}}"
+      service: ${vars.service}
+      function:
+        name: "transform_enrichment"
+        description: 'this is serverless transform function for enrichment'
+        codeUri: './transform_enrichment'
+        handler: 'index.handler_message'
+        memorySize: 128
+        runtime: python3.9
+        timeout: 60
+        asyncConfiguration:
+          maxAsyncRetryAttempts: 0
+          statefulInvocation: true
+  transform_projection: #  服务名称。
+    component: devsapp/fc  # 组件名称。
+    actions:
+      pre-deploy: # 在deploy之前运行
+        - run: s build --use-docker      # 要执行的系统命令，类似于一种钩子的形式
+          path: ./
+    props: #  组件的属性值。
+      region: "{{region}}"
+      service: ${vars.service}
+      function:
+        name: "transform_projection"
+        description: 'this is serverless transform function for projection'
+        codeUri: './transform_projection'
         handler: 'index.handler_message'
         memorySize: 128
         runtime: python3.9
@@ -43,6 +83,26 @@ services:
         name: "transform_split"
         description: 'this is serverless transform function for spliting'
         codeUri: './transform_split'
+        handler: 'index.handler_message'
+        memorySize: 128
+        runtime: python3.9
+        timeout: 60
+        asyncConfiguration:
+          maxAsyncRetryAttempts: 0
+          statefulInvocation: true
+  dynamic_routing: #  服务名称。
+    component: devsapp/fc  # 组件名称。
+    actions:
+      pre-deploy: # 在deploy之前运行
+        - run: s build --use-docker      # 要执行的系统命令，类似于一种钩子的形式
+          path: ./
+    props: #  组件的属性值。
+      region: "{{region}}"
+      service: ${vars.service}
+      function:
+        name: "ing"
+        description: 'this is serverless transform function for dynamic routing'
+        codeUri: './dynamic_routing'
         handler: 'index.handler_message'
         memorySize: 128
         runtime: python3.9

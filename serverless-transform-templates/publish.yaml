@@ -2,7 +2,7 @@ Type: Application
 Name: ServerlessTransformTemplates
 Provider:
   - 阿里云
-Version: 0.0.1
+Version: 0.0.2
 Description: Serverless transform templates for ETL scenario
 HomePage: https://github.com/devsapp/serverless-io-sink
 Tags:
