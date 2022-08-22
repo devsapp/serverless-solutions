@@ -137,6 +137,8 @@ class Sink(object):
         filename = "{0}_{1}_{2}".format(sink.sink_config["objectNamePrefix"], str(int(time.time()*1000)),
             ''.join(random.sample(string.ascii_letters + string.digits, 8)))
         path = sink.sink_config["objectPath"].lstrip('/')
+        if len(path) != 0  and not path.endswith("/"):
+            path = path + "/"
         logger.info("file path is: %s, file name is: %s", path, filename)
         data = json.dumps(payload)
         return self.compress(path, filename, data)
