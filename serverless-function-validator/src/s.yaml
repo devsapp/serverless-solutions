@@ -1,0 +1,32 @@
+edition: 1.0.0   #  命令行YAML规范版本，遵循语义化版本（Semantic Versioning）规范。
+name: serverless-function-validator     #  项目名称。
+access: fc-dev          #  密钥别名。
+
+vars:
+  service:
+    name: "{{serviceName}}"
+    description: 'serverless function validator'
+    internetAccess: true
+    role:
+    logConfig: auto
+services:
+  transform: #  服务名称。
+    component: devsapp/fc  # 组件名称。
+    actions:
+      pre-deploy: # 在deploy之前运行
+        - run: s build --use-docker      # 要执行的系统命令，类似于一种钩子的形式
+          path: ./
+    props: #  组件的属性值。
+      region: "{{region}}"
+      service: ${vars.service}
+      function:
+        name: "validator"
+        description: 'this is serverless validator function'
+        codeUri: './validator'
+        handler: 'index.handler'
+        memorySize: 128
+        runtime: python3.9
+        timeout: 60
+        asyncConfiguration:
+          maxAsyncRetryAttempts: 0
+          statefulInvocation: true
