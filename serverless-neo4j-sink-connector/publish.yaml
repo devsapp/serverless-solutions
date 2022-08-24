@@ -1,0 +1,149 @@
+Type: Application
+Name: Neo4jSinkConnector
+Provider:
+  - 阿里云
+Version: 0.0.4
+Description: 函数计算 neo4j sink connector
+HomePage: https://github.com/devsapp/serverless-io-sink
+Tags:
+  - FcSinkConnector
+Category: 函数Connector
+Service:
+  函数计算:
+    Runtime: Python 3.9
+    Authorities:
+      - AliyunFCFullAccess
+      - AliyunLogFullAccess
+Parameters:
+  type: object
+  additionalProperties: false # 不允许增加其他属性
+  required: # 必填项
+    - region
+    - serviceName
+    - transformFunctionName
+    - sinkFunctionName
+    - eventSchema
+    - batchOrNot
+    - host
+    - port
+    - user
+    - password
+    - vpcId
+    - securityGroupId
+    - vswitchIds
+    - instanceId
+    - topicName
+    - consumerGroup
+    - offsetReset
+  properties:
+    region:
+      title: 地域
+      type: string
+      default: cn-hangzhou
+      description: 创建应用所在的地区
+      enum:
+        - cn-beijing
+        - cn-hangzhou
+        - cn-shanghai
+        - cn-qingdao
+        - cn-zhangjiakou
+        - cn-huhehaote
+        - cn-shenzhen
+        - cn-chengdu
+        - cn-hongkong
+        - ap-southeast-1
+        - ap-southeast-2
+        - ap-southeast-3
+        - ap-southeast-5
+        - ap-northeast-1
+        - eu-central-1
+        - eu-west-1
+        - us-west-1
+        - us-east-1
+        - ap-south-1
+    serviceName:
+      title: 服务名
+      type: string
+      default: neo4j_sink_connector
+      description: 服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+    transformFunctionName:
+      title: transform 函数名
+      type: string
+      default: transform
+      description: 数据预处理函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+    sinkFunctionName:
+      title: sink 函数名
+      type: string
+      default: sink
+      description: 数据投递函数名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间
+    eventSchema:
+      title: 消息传递的 schema 类型
+      type: string
+      default: cloudEvent
+      description: 输入消息 schema
+      enum:
+        - customized
+        - cloudEvent
+    batchOrNot:
+      title: 消息类型
+      type: string
+      default: "False"
+      description: 输入消息的类型：是否为分批消息
+      enum:
+        - "True"
+        - "False"
+    host:
+      title: neo4j 数据库公网地址
+      type: string
+      default: ''
+      description: 'neo4j数据库连接地址，请填写公网地址'
+    port:
+      title: neo4j 数据库端口号
+      type: string
+      default: '7474'
+      description: 'neo4j数据库端口号'
+    user:
+      title: neo4j 数据库登录用户名
+      type: secret
+      default: ''
+      description: '数据库访问账号，由于包含账号密钥信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问'
+    password:
+      title: neo4j 数据库登录密码
+      type: secret
+      default: ''
+      description: '数据库访问密码，由于包含账号密钥信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问'
+    vpcId:
+      title: kafka 实例所在 vpc id
+      type: string
+      default: vpc-******
+      description: VPC id。请注意需要填写函数计算支持的 az
+    vswitchIds:
+      title: kafka 实例所在 vswitchId
+      type: string
+      default: vsw-*****
+      description: vpc 中 vswitch id, 用于内网访问 kafka, 请注意需要填写函数计算支持的 az
+    securityGroupId:
+      title: kafka 实例所在 vpc 的 security group id
+      type: string
+      default: sg-*****
+      description: vpc 下安全组 id, 用于内网访问 kafka
+    instanceId:
+      title: kafka 实例id
+      type: string
+      default: alikafka_XXXXX
+      description: kafka 实例id, 可在 kafka 控制台获取
+    topicName:
+      title: kafka topic name
+      type: string
+      default: topic-a
+      description: kafka 实例的 topic name, 此topic的数据生产会触发部署函数
+    consumerGroup:
+      title: kafka consumer group
+      type: string
+      default: consumer-a
+      description: kafka 实例的消费组, 数据由此 Group 消费
+    offsetReset:
+      title: kafka offsetReset
+      type: string
+      default: latest
+      description: kafka 消费位， 可选最新位点(latest) / 最早位点(earliest)
