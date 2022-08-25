@@ -25,6 +25,8 @@ def handler(event, context):
     dataform = ast.literal_eval(repr(response_json))
     message = json.loads(dataform)
 
+    validate_scenario = message['validate_scenario']
+    validate_account_id = message['validate_account_id']
     validate_argument = message['validate_argument']
     validate_code_encode = message['validate_code']
     validate_handler = message['validate_handler']
@@ -32,6 +34,8 @@ def handler(event, context):
     validate_code = base64.b64decode(validate_code_encode)
     print("decode: %s" % validate_code)
 
+    logger.info('validate_scenario: {%s}, account_id: {%s}, validate_message: {%s}' % (
+        validate_scenario, validate_account_id, message))
     validate_module = 'customer_function_validate_module'
     validate_module_path = '/tmp/{}.py'.format(validate_module)
 

@@ -8,7 +8,8 @@ API_ENDPOINT = "http://127.0.0.1:8080/"
 
 # your API key here
 VALIDATE_KEY = "kafka_etl_pythob_validator"
-
+scenario = 'ROCKETMQ_TO_FC_OSS'
+account_id = '1431999136518149'
 handler = 'deal_message'
 runtime = 'python3'
 message = '{"testKey": "testValue"}'
@@ -24,6 +25,8 @@ print("Source code is: %s, %s, %s" %
 
 # data to be sent to api
 data = {'validate_option': '{"action": "validate"}',
+        'validate_scenario': scenario,
+        'validate_account_id': account_id,
         'validate_handler': handler,
         'validate_argument': message,
         'validate_code_language': runtime,

@@ -2,12 +2,17 @@
 import ast
 import base64
 import json
+import logging
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from os.path import dirname
 
 hostName = "localhost"
 serverPort = 8080
+
+
+logger = logging.getLogger()
+logger.setLevel(level=logging.INFO)
 
 
 class MyServer(BaseHTTPRequestHandler):
@@ -22,6 +27,8 @@ class MyServer(BaseHTTPRequestHandler):
         message['received'] = 'ok'
         print("received test data length: %s" % message)
 
+        validate_scenario = message['validate_scenario']
+        validate_account_id = message['validate_account_id']
         validate_argument = message['validate_argument']
         validate_code_encode = message['validate_code']
         validate_handler = message['validate_handler']
@@ -29,6 +36,8 @@ class MyServer(BaseHTTPRequestHandler):
         validate_code = base64.b64decode(validate_code_encode)
         print("decode: %s" % validate_code)
 
+        logger.info('validate_scenario: {%s}, account_id: {%s}, validate_message: {%s}' % (
+            validate_scenario, validate_account_id, message))
         validate_module = 'customer_function_validate_module'
         validate_module_path = '{}.py'.format(validate_module)
 
