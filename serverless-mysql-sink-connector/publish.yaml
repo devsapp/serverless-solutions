@@ -78,12 +78,12 @@ Parameters:
       description: '数据库端口号'
     user:
       title: mysql 数据库登录用户名
-      type: password
+      type: string
       default: ''
       description: '数据库访问账号，由于包含账号密钥信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问'
     password:
       title: mysql 数据库登录密码
-      type: password
+      type: secret
       default: ''
       description: '数据库访问密码，由于包含账号密钥信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问'
     database:

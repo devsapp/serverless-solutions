@@ -103,11 +103,11 @@ Parameters:
       description: '输入 hologres 数据库名称'
     user:
       title: user
-      type: password
+      type: string
       description: '输入 hologres 登录用户名，该字段为阿里云账号的 AccessKey ID，由于包含账号密钥信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问'
     password:
       title: password
-      type: password
+      type: secret
       description: '输入 hologres 登录密码，该字段为阿里云账号的 AccessKey Secret，由于包含账号密钥信息，因此不建议将应用放到任何代码仓库(Github, Gitee, Gitlab 等)上允许公开访问'
     port:
       title: port
