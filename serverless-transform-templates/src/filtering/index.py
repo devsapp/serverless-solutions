@@ -20,7 +20,7 @@ logger.setLevel(level=logging.INFO)
 # }
 
 
-def handler_message(event, context):
+def handle_message(event, context):
     try:
         # 在对message数据清洗之前，先解析获得消息对象
         decode_event = event.decode('utf-8')

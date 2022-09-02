@@ -3,13 +3,14 @@ import ast
 import json
 import logging
 import re
+from array import array
 
 # 设置日志输出等级, 默认为INFO，可以设置DEBUG进行调试
 logger = logging.getLogger()
 logger.setLevel(level=logging.INFO)
 
 
-def handler_message(event, context):
+def handle_message(event, context):
     try:
         # 在对message数据清洗之前，先解析获得消息对象
         decode_event = event.decode('utf-8')
@@ -47,14 +48,18 @@ def projection(matched):
 
 def transform(data):
     new_dataset = []
-    # 定义数据分隔符
-    delimiter = ","
+
+    # 当前代码示例针对data按照数组（array）对象进行处理; 可以根据实际的数据结构定义处理逻辑
+    if not isinstance(data, array):
+        return data
 
     # 定义指定字段提取模式
     phone_extract_pattern = re.compile(r'^(\d{3})(\d{4})(\d{4})$', re.I)
     id_extract_pattern = re.compile(r'^(\d{3})-(\d{11})-(\d{4})$', re.I)
     for item in data:
         logger.info("data item: '%s'" % (item))
+        # 定义数据分隔符，对每一条数据进行分割处理，也可以定义自己的处理逻辑
+        delimiter = ","
         item_values = item.split(delimiter)
         new_values = []
         for value in item_values:
@@ -65,4 +70,4 @@ def transform(data):
         logger.info("new item: '%s'" % (new_values))
         new_dataset.append(", ".join(new_values))
     logger.info("new data: '%s'" % (new_dataset))
-    return data
+    return new_dataset

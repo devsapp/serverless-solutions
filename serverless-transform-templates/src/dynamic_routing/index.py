@@ -9,7 +9,7 @@ logger = logging.getLogger()
 logger.setLevel(level=logging.INFO)
 
 
-def handler_message(event, context):
+def handle_message(event, context):
     transform_messages = []
     try:
         # 在对message数据清洗之前，先解析获得消息对象
@@ -41,6 +41,9 @@ def dynamic_routing(data):
     split_dataset = []
     # 定义数据分隔符
     delimiter = '|'
+
+    # 当前代码示例针对data按照字符串进行处理; 可以根据实际的数据结构定义处理逻辑
+    data = str(data)
 
     # 对data部分数据按照分隔符进行分割，注意分隔后的内容会进行strip操作
     split_parts = data.split(delimiter)
