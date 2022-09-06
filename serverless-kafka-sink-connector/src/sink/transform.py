@@ -7,9 +7,9 @@ def transform(data, context):
 		data: data needs to be transformed
 
 	Returns:
-		data
+		data array
 
 	Raises:
 		None
 	"""
-	return data
+	return [data]
