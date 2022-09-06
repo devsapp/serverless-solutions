@@ -76,10 +76,10 @@ class Sink(object):
 		except Exception as e:
 			logger.error(e)
 			logger.error(
-				"ERROR: Unexpected error: Could not connect to MySql instance.")
+				"ERROR: Unexpected error: Could not connect to kafka instance.")
 			raise Exception(str(e))
 
-		logger.info("sink target: mysql connected")
+		logger.info("sink target: kafka connected")
 		self.connected = True
 
 	def close(self):
@@ -113,7 +113,7 @@ class Sink(object):
 	@retry(stop_max_attempt_number=default_retry_times, wait_exponential_multiplier=1000,
 	       retry_on_exception=retry_on_exception)
 	def _write_data(self, single_data):
-		""" Inner method to write data to mysql instance.
+		""" Inner method to write data to kafka instance.
 
         Args:
             single_data: input data
@@ -205,9 +205,9 @@ def handler(event, context):
 
 	try:
 		if not sink.is_connected():
-			sink.connect(sink.sink_config, context)
+			sink.connect(sink.sink_config)
 			logger.error("unconnected sink target. Now reconnected")
-		transform.transform(event)
+		transform.transform(event, context)
 		sink.deliver(event)
 
 	except Exception as e:
