@@ -18,19 +18,6 @@
 
 </description>
 
-## 应用简介
-本应用可以将您的原始输入数据经过预处理之后，传输到您的 kafka topic 中。 
-
-本应用在事件数据传输中主要负责数据的数据预处理以及数据投递，其流程可参考下图：
-
-![简介图](https://img.alicdn.com/imgextra/i1/O1CN01E9a3ZD230u3yoFO84_!!6000000007194-2-tps-2864-1082.png)
-
-Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Service，最终投递到下游服务中，Sink Service 中包含两个功能函数：
-- Transform Function： 数据预处理函数，可自定义预处理逻辑，处理后的源端数据会被发送到 Sink Function 中。
-- Sink Function：数据投递函数，接收数据后将其投递到下游服务中。
-
-如果您需要对数据进行转换，可以编写应用创建后的 transform 函数。否则您只需调用 sink 函数即可。
-
 ## 前期准备
 使用该项目，推荐您拥有以下的产品权限 / 策略：
 
@@ -66,11 +53,17 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 <appdetail id="flushContent">
 
 
+## 应用简介
+### 基于函数计算实现的 kafka proxy，通过 SDK Invoke Function 的方式将消息传递至 Kafka 特定 Topic
+
+本应用可以将您的原始输入数据进过预处理之后，传输到您的 kafka topic 中。
+如果您需要对数据进行转换，可以编写代码中的 transform 函数。
+
 ## 使用步骤
 您可以通过应用中心或直接使用 s 工具进行部署。
-1. 准备资源：创建 mysql 实例，并开启公网访问；
+1. 准备资源：创建 Kafka 实例及对应 topic；
 2. 部署应用；参数按照需要进行填写；
-3. 进行测试。构建输入参数（dataSchema：cloudEvent）
+3. 进行测试。构建输入参数。示例：
 ```
 {
     "data":{
@@ -97,16 +90,14 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 
 #### s 工具调用
 应用部署完成后，按照如下步骤进行通过 s 工具进行函数调用：
-1. 进入应用项目工程下，在 s.yaml 查找应用初始化时输入的 `batchOrNot` 值，若：
-   - `batchOrNot` 为 False：将文件 event-template/sink-single-event.json 中的值修改为目标值后，执行 `s sink invoke --event-file event-template/sink-single-event.json` 进行函数调用
-   - `batchOrNot` 为 True：将文件 event-template/sink-batch-event.json 中的值修改为目标值后，执行 `s sink invoke --event-file event-template/sink-batch-event.json` 进行函数调用
-2. 函数调用完成后，可以登陆到 [kafka 控制台](https://kafka.console.aliyun.com/)查看目标数据表中是否已经写入数据。
+1. 函数调用完成后，可以登陆到 [kafka 控制台](https://kafka.console.aliyun.com/)查看目标数据表中是否已经写入数据。
 
 
 ### 高级功能
 #### 自定义数据转储处理逻辑
-本应用创建后会生成两个函数：transform 函数及 sink 函数。如果您需要对原始数据进行处理，可以编写 transform 函数中的 transform 方法，以便按照您需要的方式对数据进行预处理。
-
+如果您需要对原始数据进行处理，可以修改函数中的 transform 方法，以便按照您需要的方式对数据进行预处理。
+#### 通过 HTTP 方式触发函数
+如果您不方便使用 SDK 触发函数，可以使用我们的 KafkaHTTPProxy 应用。该应用通过创建 HTTP 触发器的方式，支持您通过 http 方式发送数据到 Kafka。
 </appdetail>
 
 <devgroup>
