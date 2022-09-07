@@ -34,9 +34,9 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 ## 前期准备
 使用该项目，推荐您拥有以下的产品权限 / 策略：
 
-| 服务/业务 | 函数计算 |     
-| --- |  --- |   
-| 权限/策略 | AliyunFCFullAccess<br>AliyunLogFullAccess |     
+| 服务/业务 | 函数计算                                                                      |
+| --- |---------------------------------------------------------------------------|
+| 权限/策略 | AliyunFCFullAccess<br>AliyunLogFullAccess<br> AliyunEventBridgeFullAccess |
 
 <codepre id="codepre">
 
@@ -83,9 +83,6 @@ Poller Service 从源端拉取数据后，再推送给本应用对应的 Sink Se
 - host：目标Neo4j数据库的公网访问地址，e.g: http://xx.xxx.xx.xx
 - user 以及 password：确保这两个字段分别为Neo4j的有效用户名及密码，否则不能连接到该Neo4j数据库
 - port: 目标Neo4j数据库的访问端口，需要确认数据库所在机器已对该端口入方向放行
-- vpcId: 我们推荐您使用VPC访问Kafka，选择创建Kafka实例时使用的VPC。注意需要填写函数计算支持的 az。
-- vswitchIds:  使用vpc中的vswitch id，用于内网访问 kafka，注意需要在函数计算支持的az。
-- securityGroupId:  kafka 实例所在 vpc 的安全组id，可在`云服务器 ECS`控制台`网络与安全`菜单项找到。
 - 实例ID (instanceId): 您购买的Kafka实例ID。
 - topicName: Kafka实例中某个topic name，此topic的数据生产会触发部署函数，需要您提前创建。
 - 消费组 (consumerGroup): 数据由此消费组消费，需要您提前创建。

@@ -116,9 +116,24 @@ class Sink(object):
             Exception
         """
         for data in data_list:
-            print(data['key'])
-            node = Node(data['key'], name=data['value'])
-            self.conn.create(node)
+            # you can handle the message accroding to your need,here are some sample example.
+            if (data['key'] == "Cypher"):
+                """
+                example:
+
+                cypher1 = "CREATE (:Person {name:'Neo', age:22, company:'Alibaba'}),\
+                (:CreditCard {name:'card1', cardID:'0908-3030-1434', balance:1000,\
+                currency:'RMB'})"
+
+                cypher2 = "MATCH (from:Person{name:'Neo'}),\
+                (to:CreditCard{name:'card1'}) MERGE (from)-[r:own]->(to)"
+
+                """
+                self.conn.run(data['value'])
+            else:
+                cypher = "CREATE (: " + data['key'] + " " + data['value'] + ")"
+                self.conn.run(cypher)
+
         return True
 
     @retry(stop_max_attempt_number=default_retry_times, wait_exponential_multiplier=1000,
