@@ -106,29 +106,41 @@ class Sink(object):
 
     def _write_data(self, data_list):
         """ Inner method to write data to neo4j instance.
+        you can handle the message accroding to your need,here are some sample example.
 
         Args:
-            single_data: input data
+            data_list: input data
 
         Returns:
 
         Raises:
             Exception
+
+        Notes:
+            following code shows how we handle the kafka message:
+             1.if the key of kafka message is the string 'Cypher' ,we treat the value of kafka
+               message as a cypher statement,so we run it directly.
+             2. if not, we try to create a Node for you, and we treat the key as a label,
+              the value as properties.
+            If the above processing method does not apply to your business scenario, you can
+            modify the following code.
+
+
+        Example1:
+            data['key'] <-- "Cypher"
+            data['value'] <-- "CREATE (:Person {name:'Neo', age:22, company:'Alibaba'}),\
+            (:CreditCard {name:'card1', cardID:'0908-3030-1434', balance:1000,\
+            currency:'RMB'})"
+        Example2:
+            data['key'] <-- "Cypher"
+            data['value'] <-- "MATCH (from:Person{name:'Neo'}),\
+            (to:CreditCard{name:'card1'}) MERGE (from)-[r:own]->(to)"
+        Example3:
+            data['key'] <-- "Person"
+             data['value'] <-- "{name:'Tina', age:23, company:'Amazon'}"
         """
         for data in data_list:
-            # you can handle the message accroding to your need,here are some sample example.
-            if (data['key'] == "Cypher"):
-                """
-                example:
-
-                cypher1 = "CREATE (:Person {name:'Neo', age:22, company:'Alibaba'}),\
-                (:CreditCard {name:'card1', cardID:'0908-3030-1434', balance:1000,\
-                currency:'RMB'})"
-
-                cypher2 = "MATCH (from:Person{name:'Neo'}),\
-                (to:CreditCard{name:'card1'}) MERGE (from)-[r:own]->(to)"
-
-                """
+            if data['key'] == "Cypher":
                 self.conn.run(data['value'])
             else:
                 cypher = "CREATE (: " + data['key'] + " " + data['value'] + ")"
