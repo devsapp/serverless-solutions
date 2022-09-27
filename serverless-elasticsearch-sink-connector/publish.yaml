@@ -1,0 +1,121 @@
+Type: Application
+Name: ElasticSearchSinkConnect
+Provider:
+  - 阿里云
+Version: dev
+Description: Serverless Elastic Search Sink Connect
+HomePage: https://github.com/devsapp/serverless-io-sink
+Tags:
+  - FcSinkConnector
+Category: 函数Connector
+Service:
+  函数计算:
+    Runtime: Python 3.9
+    Authorities:
+      - AliyunFCFullAccess
+      - AliyunLogFullAccess
+      - AliyunElasticsearchFullAccess
+Parameters:
+  type: object
+  additionalProperties: false # 不允许增加其他属性
+  required: # 必填项
+    - region
+    - serviceName
+    - sinkFunctionName
+    - dataSchema
+    - messageType
+    - esHost
+    - esUser
+    - esPassword
+    - esPort
+    - esIndex
+    - esDocType
+    - esUseSsl
+  properties:
+    region:
+      title: 地域
+      type: string
+      default: cn-hangzhou
+      description: '创建应用所在的地区'
+      enum:
+        - cn-beijing
+        - cn-hangzhou
+        - cn-shanghai
+        - cn-qingdao
+        - cn-zhangjiakou
+        - cn-huhehaote
+        - cn-shenzhen
+        - cn-chengdu
+        - cn-hongkong
+        - ap-southeast-1
+        - ap-southeast-2
+        - ap-southeast-3
+        - ap-southeast-5
+        - ap-northeast-1
+        - eu-central-1
+        - eu-west-1
+        - us-west-1
+        - us-east-1
+        - ap-south-1
+    serviceName:
+      title: 服务名
+      type: string
+      default: sink_connector
+      description: '服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间'
+    sinkFunctionName:
+      title: sink 函数名
+      type: string
+      default: sink
+      description: '服务名称，只能包含字母、数字、下划线和中划线。不能以数字、中划线开头。长度在 1-128 之间'
+    dataSchema:
+      title: 消息传递的 shema 类型
+      type: string
+      default: cloudEvent
+      description: '输入消息 schema'
+      enum:
+        - customized
+        - cloudEvent
+    batchOrNot:
+      title: 消息类型
+      type: string
+      default: "False"
+      description: '输入消息的类型：分批 or 单条消息'
+      enum:
+        - "False"
+        - "True"
+    esHost:
+      title: Elastic Search 公网地址
+      type: string
+      default: ''
+      description: 'Elastic Search 公网地址，可以从 Elastic Search 控制台进行查看，请保证公网 ip 白名单向全网段开放'
+    esUser:
+      title: Elastic Search 实例登陆用户名
+      type: string
+      default: 'elastic'
+      description: 'Elastic Search user 登录用户名称，一般默认值为 elastic'
+    esPassword:
+      title: Elastic Search 实例登陆密码
+      type: secret
+      description: 'Elastic Search password 登录密码'
+    esPort:
+      title: Elastic Search 实例接入端口
+      type: string
+      default: 9200
+      description: 'Elastic Search 接入 port, 阿里云服务的默认值为 9200'
+    esIndex:
+      title: Elastic Search实例索引
+      type: string
+      description: 'Elastic Search instance index 实例索引, 请保证该索引已经存在'
+    esDocType:
+      title: Elastic Search 数据文档类型
+      type: string
+      default: '_doc'
+      description: 'Elastic Search 文档类型'
+    esUseSsl:
+      title: 是否使用 SSL
+      type: string
+      default: 'False'
+      description: '是否使用 ssl 连接 elastic search'
+      enum:
+        - "False"
+        - "True"
