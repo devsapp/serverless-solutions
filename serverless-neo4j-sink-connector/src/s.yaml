@@ -9,25 +9,26 @@ vars:
     internetAccess: true
     role:
     logConfig: auto
-    vpcConfig:
-      vpcId: "{{vpcId}}" # Kafka实例所在的VPC ID
-      securityGroupId: "{{securityGroupId}}" # 安全组Id
-      vswitchIds:
-      - "{{vswitchIds}}" # Kafka实例所在的vSwitch ID
-  transformfunction:
-    name: "{{transformFunctionName}}"
-    description: 'this is serverless sink connect framework transform function'
-    codeUri: './transform'
+    vpcConfig: # VPC配置, 配置后function可以访问指定VPC
+      vpcId: "{{vpcId}}"              # VPC ID
+      securityGroupId: "{{securityGroupId}}"    # 安全组ID
+      vswitchIds: # 交换机 ID 列表
+        - "{{vswitchIds}}"
+  sinkfunction:
+    name: sink
+    description: 'this is serverless sink connect framework sink function'
+    codeUri: './sink'
     handler: 'index.handler'
-    environmentVariables:
-      TRANSFORM_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}"}'
-      DESTINATION_CONFIG: '{"serviceName": "{{serviceName}}","functionName": "{{sinkFunctionName}}"}'
-    memorySize: 128
+    environmentVariables: ${vars.sinkEnv}
+    memorySize: 256
+    initializer: 'index.initialize'
+    initializationTimeout: 10
+    instanceLifecycleConfig:
+      preStop:
+        handler: 'index.destroy'
+        timeout: 3
     runtime: python3.9
     timeout: 600
-    asyncConfiguration:
-      maxAsyncRetryAttempts: 0
-      statefulInvocation: true
   sinkEnv:
     SINK_CONFIG: '{"eventSchema": "{{eventSchema}}","batchOrNot": "{{batchOrNot}}","host": "{{host}}","port": "{{port}}","user": "{{user}}","password": "{{password}}"}'
 
@@ -38,7 +39,7 @@ services:
     props: #  组件的属性值。
       region: "{{region}}"
       service: ${vars.service}
-      function: ${vars.transformfunction}
+      function: ${vars.sinkfunction}
       triggers:
         - name: eventbridgeTriggerWithKafkaSource
           type: eventbridge
@@ -58,16 +59,7 @@ services:
                   Topic: "{{topicName}}" # 需要提前创建
                   ConsumerGroup: "{{consumerGroup}}" # 需要提前创建
                   OffsetReset: "{{offsetReset}}" # latest or earliest
-  transform: #  服务名称。
-    component: devsapp/fc  # 组件名称。
-    actions:
-      pre-deploy: # 在deploy之前运行
-        - run: s build --use-docker      # 要执行的系统命令，类似于一种钩子的形式
-          path: ./
-    props: #  组件的属性值。
-      region: "{{region}}"
-      service: ${vars.service}
-      function: ${vars.transformfunction}
+
   sink: #  服务名称。
     component: devsapp/fc  # 组件名称。
     actions:
@@ -77,21 +69,4 @@ services:
     props: #  组件的属性值。
       region: "{{region}}"
       service: ${vars.service}
-      function:
-        name: "{{sinkFunctionName}}"
-        description: 'this is serverless sink connect framework sink function'
-        codeUri: './sink'
-        handler: 'index.handler'
-        environmentVariables: ${vars.sinkEnv}
-        memorySize: 128
-        initializer: 'index.initialize'
-        initializationTimeout: 10
-        instanceLifecycleConfig:
-          preStop:
-            handler: 'index.destroy'
-            timeout: 3
-        runtime: python3.9
-        timeout: 600
-        asyncConfiguration:
-          maxAsyncRetryAttempts: 0
-          statefulInvocation: true
+      function: ${vars.sinkfunction}
