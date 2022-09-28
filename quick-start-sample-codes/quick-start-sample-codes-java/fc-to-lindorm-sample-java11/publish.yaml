@@ -1,6 +1,6 @@
 Type: Application
 Name: FCToLindormJava11
-Version: dev
+Version: 0.1.0
 Provider:
   - 阿里云
 Description: 在阿里云函数计算上快速部署一个可以在 lindorm 宽表引擎上建表插入数据的任务。
