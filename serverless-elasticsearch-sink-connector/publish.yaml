@@ -2,7 +2,7 @@ Type: Application
 Name: ElasticSearchSinkConnect
 Provider:
   - 阿里云
-Version: dev
+Version: 0.0.1
 Description: Serverless Elastic Search Sink Connect
 HomePage: https://github.com/devsapp/serverless-io-sink
 Tags:
